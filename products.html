@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Models - LeapReplica</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand">LeapReplica</a>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <button class="nav-toggle" id="nav-toggle-2" aria-label="Toggle navigation">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="models container">
+      <h1>Our Models</h1>
+      <div class="grid">
+        <article class="model-card">
+          <img src="assets/model-a.jpg" alt="Model A">
+          <h3>Model A</h3>
+          <p>Range up to 600 km</p>
+          <p><a class="btn" href="#">Configure</a></p>
+        </article>
+
+        <article class="model-card">
+          <img src="assets/model-b.jpg" alt="Model B">
+          <h3>Model B</h3>
+          <p>City optimized, compact</p>
+          <p><a class="btn" href="#">Configure</a></p>
+        </article>
+
+        <article class="model-card">
+          <img src="assets/model-c.jpg" alt="Model C">
+          <h3>Model C</h3>
+          <p>Family SUV with smart features</p>
+          <p><a class="btn" href="#">Configure</a></p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© 2025 LeapReplica</div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00DMA000003XnGM',
+				'LPM_Leapmotor',
+				'https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231',
+				{
+					scrt2URL: 'https://leapmotor--dev01.sandbox.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+</body>
+</html>
