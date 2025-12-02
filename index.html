@@ -89,11 +89,16 @@
 	function initEmbeddedMessaging() {
 		try {
 			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+			// Personalizzazione del pulsante
+            embeddedservice_bootstrap.settings.displayHelpButton = true;
+            embeddedservice_bootstrap.settings.defaultMinimizedText = "Chat with Leappy";
+            embeddedservice_bootstrap.settings.disabledMinimizedText = "Leappy Offline";
+
       window.addEventListener("onEmbeddedMessagingReady", () => {
           
           embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
             Country: 'United Kingdom',
-            Language: 'en',
+            Language: 'en_US',
 			CountryCode: 'uk',
           });
         });
@@ -114,5 +119,6 @@
 </body>
 
 </html>
+
 
 
