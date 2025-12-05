@@ -85,18 +85,46 @@
   </footer>
 
   <script src="js/main.js"></script>
-<script type="text/javascript">
+	<script type='text/javascript'>
   function initEmbeddedMessaging() {
     try {
-      embeddedservice_bootstrap.settings.language = 'en-US'; // For example, enter 'en' or 'en-US'
+      // Get country code from URL path
+      var path = window.location.pathname;
+      var pathParts = path.split('/').filter(function(part) { return part.length > 0; });
+      var countryCode = 'en'; // default
+      
+      if (pathParts.length > 0) {
+        countryCode = pathParts[0].toLowerCase();
+      }
+      
+      // Country mapping for prechat fields
+      var countryMapping = {
+        'it': { name: 'Italy', language: 'it', code: 'it' },
+        'es': { name: 'Spain', language: 'es', code: 'es' },
+        'fr': { name: 'France', language: 'fr', code: 'fr' },
+        'de': { name: 'Germany', language: 'de', code: 'de' },
+        'uk': { name: 'United Kingdom', language: 'en', code: 'uk' },
+        'us': { name: 'United States', language: 'en', code: 'us' },
+        'en': { name: 'United States', language: 'en', code: 'en' }
+      };
+      
+      var countryInfo = countryMapping[countryCode] || countryMapping['en'];
+      
+      // Set language dynamically based on country code
+      embeddedservice_bootstrap.settings.language = countryInfo.language;
+      embeddedservice_bootstrap.settings.shouldOpenLinksInSameTab = true;
+      embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
+      
+      console.log('Detected country code:', countryCode, '| Setting language to:', countryInfo.language);
       
       window.addEventListener("onEmbeddedMessagingReady", () => {
         embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
-          Country: "United Kingdom",
-          Language: "en_US",
-          CountryCode: "uk"
+          Country: countryInfo.name,
+          Language: countryInfo.language,
+          CountryCode: countryInfo.code,
         });
       });
+      
       embeddedservice_bootstrap.init(
         "00DMA000003XnGM",
         "LPM_Leapmotor",
@@ -109,36 +137,100 @@
       console.error("Error loading Embedded Messaging: ", err);
     }
   }
+  
   (function () {
-    console.log("Test custom chat button with Christmas carousel");
+    console.log("Test custom chat button with Leapmotor carousel");
+    
     // Get country code from URL path
     function getCountryFromURL() {
       var path = window.location.pathname;
       var pathParts = path.split('/').filter(function(part) { return part.length > 0; });
       
-      // Check if there's a country code in the path (e.g., /it/, /es/, /fr/)
       if (pathParts.length > 0) {
         var countryCode = pathParts[0].toLowerCase();
         return countryCode;
       }
-      return 'en'; // default to English
+      return 'en';
     }
+    
     // Get localized message based on country
     function getLocalizedMessage(countryCode) {
       var messages = {
-        'it': 'Parla con Agentforce! 🎄',      // Italian
-        'es': 'Habla con Agentforce! 🎄',      // Spanish
-        'fr': 'Parlez avec Agentforce! 🎄',    // French
-        'de': 'Sprechen Sie mit Agentforce! 🎄', // German
-        'uk': 'Talk with Agentforce! 🎄',      // UK English
-        'us': 'Talk with Agentforce! 🎄',      // US English
-        'en': 'Talk with Agentforce! 🎄'       // Default English
+        'it': 'Chatta con me!',
+        'es': '¡Chatea conmigo!',
+        'fr': 'Discutez avec moi!',
+        'de': 'Chatte mit mir!',
+        'uk': 'Chat with me!',
+        'us': 'Chat with me!',
+        'en': 'Chat with me!'
       };
       return messages[countryCode] || messages['en'];
     }
+    
+    // Get localized popup message
+    function getLocalizedPopupMessage(countryCode) {
+      var popupMessages = {
+        'it': '👋 Ciao! Hai bisogno di aiuto? Prova la nostra chat!',
+        'es': '👋 ¡Hola! ¿Necesitas ayuda? ¡Prueba nuestro chat!',
+        'fr': '👋 Bonjour! Besoin d\'aide? Essayez notre chat!',
+        'de': '👋 Hallo! Brauchen Sie Hilfe? Probieren Sie unseren Chat!',
+        'uk': '👋 Hi! Need help? Try our chat!',
+        'us': '👋 Hi! Need help! Try our chat!',
+        'en': '👋 Hi! Need help? Try our chat!'
+      };
+      return popupMessages[countryCode] || popupMessages['en'];
+    }
+    
+    // Get localized toggle button messages
+    function getLocalizedToggleMessages(countryCode) {
+      var toggleMessages = {
+        'it': { open: 'Apri Chat', close: 'Chiudi Chat' },
+        'es': { open: 'Abrir Chat', close: 'Cerrar Chat' },
+        'fr': { open: 'Ouvrir Chat', close: 'Fermer Chat' },
+        'de': { open: 'Chat Öffnen', close: 'Chat Schließen' },
+        'uk': { open: 'Open Chat', close: 'Close Chat' },
+        'us': { open: 'Open Chat', close: 'Close Chat' },
+        'en': { open: 'Open Chat', close: 'Close Chat' }
+      };
+      return toggleMessages[countryCode] || toggleMessages['en'];
+    }
+    
     var detectedCountry = getCountryFromURL();
     var buttonMessage = getLocalizedMessage(detectedCountry);
+    var popupMessage = getLocalizedPopupMessage(detectedCountry);
+    var toggleMessages = getLocalizedToggleMessages(detectedCountry);
     console.log('Detected country:', detectedCountry, '| Message:', buttonMessage);
+    
+    var chatClicked = false;
+    var popupInterval = null;
+    var embeddedServiceInstance = null;
+    var isChatButtonVisible = true;  // Track button visibility
+    
+    // Create notification sound using Web Audio API
+    function playNotificationSound() {
+      try {
+        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        var oscillator = audioContext.createOscillator();
+        var gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+        
+        console.log('Notification sound played');
+      } catch (e) {
+        console.warn('Could not play notification sound:', e);
+      }
+    }
+    
     function hideStandardButton(es) {
       if (es && es.utilAPI && typeof es.utilAPI.hideChatButton === "function") {
         try {
@@ -149,11 +241,13 @@
         }
       }
     }
+    
     function showCustomCTA(es) {
       if (!es || !es.utilAPI) {
         console.warn("utilAPI not available");
         return;
       }
+      
       var existing = document.getElementById("leap-chat-cta");
       if (existing) {
         existing.style.display = "inline-flex";
@@ -161,133 +255,276 @@
         console.log("Custom CTA shown again");
         return;
       }
+      
       // Create button container
       var btn = document.createElement("button");
       btn.id = "leap-chat-cta";
       btn.style.position = "fixed";
-      btn.style.right = "20px";  // Shifted left from 32px
-      btn.style.bottom = "24px";
+      // Responsive positioning - smaller margins on smaller screens
+      if (window.innerWidth <= 480) {
+        // Mobile
+        btn.style.right = "6px";
+        btn.style.bottom = "12px";
+      } else if (window.innerWidth <= 768) {
+        // Tablet
+        btn.style.right = "8px";
+        btn.style.bottom = "16px";
+      } else {
+        // Desktop
+        btn.style.right = "10px";
+        btn.style.bottom = "24px";
+      }
       btn.style.zIndex = "99999";
-      // Optimized SIZE - Slightly smaller but still prominent
-      btn.style.padding = "28px 48px";  // Reduced from 32px 56px
-      btn.style.fontSize = "24px";      // Reduced from 26px
+      btn.style.padding = "11px 39px";  // Reduced from 14px (20% reduction)
+      btn.style.fontSize = "22px";
       btn.style.fontWeight = "700";
-      btn.style.borderRadius = "999px";
+      btn.style.borderRadius = "999px";  // Unchanged
       btn.style.border = "none";
       btn.style.cursor = "pointer";
-      btn.style.boxShadow =
-        "0 12px 32px rgba(0,0,0,0.5), 0 0 60px rgba(255, 215, 0, 0.4)";
-      btn.style.background =
-        "linear-gradient(135deg, #c41e3a 0%, #165b33 50%, #c41e3a 100%)";
+      btn.style.boxShadow = "0 12px 32px rgba(0,0,0,0.3), 0 0 40px rgba(100, 160, 40, 0.4)";
+      btn.style.background = "#64a028";  // Solid green color
       btn.style.backgroundSize = "200% 200%";
       btn.style.color = "#ffffff";
       btn.style.display = "inline-flex";
       btn.style.alignItems = "center";
       btn.style.justifyContent = "center";
-      btn.style.gap = "18px";           // Reduced from 20px
+      btn.style.gap = "18px";
       btn.style.transition = "all 0.3s ease";
       btn.style.overflow = "visible";
       btn.style.fontFamily = "'Arial', sans-serif";
       btn.style.textShadow = "3px 3px 6px rgba(0,0,0,0.4)";
-      btn.style.minWidth = "350px";     // Reduced from 380px
-      btn.style.minHeight = "85px";     // Reduced from 90px
-      // Christmas icons carousel
+      btn.style.minWidth = "284px";  // Reduced from 315px (10% smaller)
+      btn.style.minHeight = "77px";  // Reduced from 85px (10% smaller)
+      
+      // Leapmotor car images carousel - Rounded rectangle format
       var iconContainer = document.createElement("div");
       iconContainer.style.position = "relative";
-      iconContainer.style.width = "44px";   // Slightly reduced from 48px
-      iconContainer.style.height = "44px";  // Slightly reduced from 48px
+      iconContainer.style.width = "85px";  // Reduced from 100px (proportional to button)
+      iconContainer.style.height = "60px";  // Reduced from 70px
       iconContainer.style.display = "flex";
       iconContainer.style.alignItems = "center";
       iconContainer.style.justifyContent = "center";
-      var christmasIcons = ["🎄", "🎅", "⛄", "🎁", "❄️", "🔔", "⭐", "🦌"];
-      var currentIconIndex = 0;
-      var iconSpan = document.createElement("span");
-      iconSpan.style.fontSize = "44px";     // Slightly reduced from 48px
-      iconSpan.style.display = "block";
-      iconSpan.style.animation = "iconFadeIn 0.5s ease";
-      iconSpan.textContent = christmasIcons[0];
-      iconContainer.appendChild(iconSpan);
+      iconContainer.style.overflow = "hidden";
+      
+      // Car image URLs - Replace these with your actual Leapmotor car images
+      var carImages = [
+        { name: 'model1', url: 'assets/model1.png'},
+        { name: 'model2', url: 'assets/model2.png'},
+        { name: 'model3', url: 'assets/model3.png'},
+        { name: 'model4', url: 'assets/model4.png'},
+        { name: 'model5', url: 'assets/model5.png'}
+      ];
+      var currentCarIndex = 0;
+      
+      var carImg = document.createElement("img");
+      carImg.src = carImages[0].url;
+      carImg.alt = carImages[0].name;
+      carImg.style.width = "100%";
+      carImg.style.height = "100%";
+      carImg.style.objectFit = "contain";
+      carImg.style.display = "block";
+      carImg.style.transition = "opacity 0.5s ease, transform 0.3s ease";
+      // Rounded rectangle format with subtle background
+      carImg.style.filter = "drop-shadow(0 3px 8px rgba(0,0,0,0.2)) brightness(1.15) contrast(1.08) saturate(1.1)";
+      carImg.style.background = "rgba(255, 255, 255, 0.15)";  // Subtle semi-transparent white
+      carImg.style.borderRadius = "16px";  // Rounded rectangle
+      carImg.style.padding = "8px";  // Padding for breathing room
+      carImg.style.border = "1px solid rgba(255, 255, 255, 0.2)";
+      carImg.style.boxShadow = "inset 0 1px 2px rgba(255,255,255,0.3)";
+      carImg.style.backdropFilter = "blur(10px)";  // Glassmorphism effect
+      iconContainer.appendChild(carImg);
+      
       // Text content with localized message
       var textSpan = document.createElement("span");
-      textSpan.textContent = buttonMessage;  // Use localized message
+      textSpan.textContent = buttonMessage;
       textSpan.style.letterSpacing = "0.5px";
+      
+      // Leapmotor logo - Much bigger, seamlessly blended
+      var logoImg = document.createElement("img");
+      logoImg.src = "assets/Leapmotor.png";
+      logoImg.alt = "Leapmotor";
+      logoImg.style.height = "42px";  // Reduced from 50px (proportional)
+      logoImg.style.width = "auto";
+      logoImg.style.objectFit = "contain";
+      logoImg.style.marginLeft = "16px";
+      logoImg.style.opacity = "1";
+      // Seamless blending with button background
+      logoImg.style.filter = "drop-shadow(0 3px 10px rgba(0,0,0,0.2)) brightness(1.25) contrast(1.08)";
+      logoImg.style.background = "transparent";
+      logoImg.style.padding = "0";
+      logoImg.style.borderRadius = "0";
+      logoImg.style.border = "none";
+      logoImg.style.boxShadow = "none";
+      
       btn.appendChild(iconContainer);
       btn.appendChild(textSpan);
+      btn.appendChild(logoImg);
+      
       // Add CSS animations
       var style = document.createElement("style");
       style.textContent = `
-      @keyframes iconFadeIn {
-        0% { opacity: 0; transform: scale(0.5) rotate(-180deg); }
-        100% { opacity: 1; transform: scale(1) rotate(0deg); }
-      }
-      
-      @keyframes iconFadeOut {
-        0% { opacity: 1; transform: scale(1) rotate(0deg); }
-        100% { opacity: 0; transform: scale(0.5) rotate(180deg); }
-      }
-      @keyframes snowfall {
-        0% { transform: translateY(-10px) translateX(0); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(10px) translateX(5px); opacity: 0; }
-      }
-      @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
-      #leap-chat-cta {
-        animation: gradientShift 3s ease infinite, pulse 2s ease-in-out infinite;
-      }
-      #leap-chat-cta:hover {
-        transform: scale(1.08) !important;
-        box-shadow: 0 12px 32px rgba(0,0,0,0.5), 0 0 60px rgba(255, 215, 0, 0.5) !important;
-      }
-    `;
+        @keyframes carFadeIn {
+          0% { opacity: 0; transform: scale(0.8); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes carFadeOut {
+          0% { opacity: 1; transform: scale(1); }
+          100% { opacity: 0; transform: scale(0.8); }
+        }
+        
+        @keyframes energyParticle {
+          0% { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateY(10px) translateX(5px) rotate(180deg); opacity: 0; }
+        }
+        
+        @keyframes energyFlow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes electricPulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 12px 32px rgba(0,0,0,0.3), 0 0 40px rgba(0, 150, 255, 0.3); }
+          50% { transform: scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.3), 0 0 50px rgba(0, 200, 255, 0.5); }
+        }
+        
+        @keyframes popupSlideIn {
+          0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        @keyframes popupBounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        
+        #leap-chat-cta {
+          animation: energyFlow 3s ease infinite, electricPulse 2s ease-in-out infinite;
+        }
+        
+        #leap-chat-cta:hover {
+          transform: scale(1.08) !important;
+          box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 60px rgba(0, 200, 255, 0.6) !important;
+        }
+        
+        .chat-popup-tooltip {
+          position: fixed;
+          right: 32px;
+          bottom: 140px;
+          background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+          color: #333;
+          padding: 16px 24px;
+          border-radius: 16px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 40px rgba(196, 30, 58, 0.2);
+          z-index: 99998;
+          max-width: 280px;
+          font-family: 'Arial', sans-serif;
+          font-size: 15px;
+          font-weight: 600;
+          animation: popupSlideIn 0.5s ease, popupBounce 1.5s ease-in-out 0.5s infinite;
+          border: 3px solid #0066cc;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .chat-popup-tooltip:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 50px rgba(196, 30, 58, 0.3);
+        }
+        
+        .chat-popup-tooltip::after {
+          content: '';
+          position: absolute;
+          bottom: -12px;
+          right: 40px;
+          width: 0;
+          height: 0;
+          border-left: 12px solid transparent;
+          border-right: 12px solid transparent;
+          border-top: 12px solid #0066cc;
+        }
+        
+        .chat-popup-close {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: #0066cc;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          font-size: 16px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          line-height: 1;
+        }
+        
+        .chat-popup-close:hover {
+          background: #0052a3;
+        }
+      `;
       document.head.appendChild(style);
-      // Icon carousel rotation
+      
+      // Car carousel rotation
       setInterval(function () {
-        iconSpan.style.animation = "iconFadeOut 0.5s ease";
+        carImg.style.opacity = "0";
+        
         setTimeout(function () {
-          currentIconIndex = (currentIconIndex + 1) % christmasIcons.length;
-          iconSpan.textContent = christmasIcons[currentIconIndex];
-          iconSpan.style.animation = "iconFadeIn 0.5s ease";
+          currentCarIndex = (currentCarIndex + 1) % carImages.length;
+          carImg.src = carImages[currentCarIndex].url;
+          carImg.alt = carImages[currentCarIndex].name;
+          carImg.style.opacity = "1";
+          console.log('Showing car:', carImages[currentCarIndex].name);
         }, 500);
       }, 3000);
-      // Snowflakes effect
-      function createSnowflake() {
-        var snowflake = document.createElement("div");
-        snowflake.textContent = "❄";
-        snowflake.style.position = "absolute";
-        snowflake.style.fontSize = "20px";
-        snowflake.style.color = "#ffffff";
-        snowflake.style.pointerEvents = "none";
-        snowflake.style.animation = "snowfall 2s linear";
-        snowflake.style.left = Math.random() * 100 + "%";
-        snowflake.style.top = "-10px";
-        snowflake.style.opacity = "0";
-        btn.appendChild(snowflake);
+      
+      // Energy particles effect (replacing snowflakes)
+      function createEnergyParticle() {
+        var particle = document.createElement("div");
+        particle.textContent = "⚡";  // Lightning bolt emoji
+        particle.style.position = "absolute";
+        particle.style.fontSize = "16px";
+        particle.style.color = "#00d4ff";
+        particle.style.pointerEvents = "none";
+        particle.style.animation = "energyParticle 2s linear";
+        particle.style.left = Math.random() * 100 + "%";
+        particle.style.top = "-10px";
+        particle.style.opacity = "0";
+        
+        btn.appendChild(particle);
+        
         setTimeout(function () {
-          if (snowflake.parentNode) {
-            snowflake.parentNode.removeChild(snowflake);
+          if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
           }
         }, 2000);
       }
-      // Create snowflakes periodically
-      setInterval(createSnowflake, 800);
+      
+      // Removed energy particles animation for cleaner look
+      // setInterval(createEnergyParticle, 1000);
+      
       btn.addEventListener("mouseenter", function () {
         btn.style.transform = "scale(1.08)";
       });
+      
       btn.addEventListener("mouseleave", function () {
         btn.style.transform = "scale(1)";
       });
+      
       btn.addEventListener("click", function () {
-        if (typeof es.utilAPI.launchChat === "function") {
+        chatClicked = true;
+        hidePopupTooltip();
+        stopPopupInterval();
+        
+        if (typeof embeddedServiceInstance.utilAPI.launchChat === "function") {
           console.log("launchChat() from CTA");
-          var r = es.utilAPI.launchChat();
+          var r = embeddedServiceInstance.utilAPI.launchChat();
           if (r && typeof r.then === "function") {
             r.then(function () {
               console.log("Chat launched (Promise resolved)");
@@ -299,10 +536,177 @@
           console.warn("launchChat() not available");
         }
       });
+      
       document.body.appendChild(btn);
       hideStandardButton(es);
-      console.log("Custom CTA created with Christmas carousel");
+      embeddedServiceInstance = es;
+      console.log("Custom CTA created with Leapmotor electric car carousel");
+      
+      // Create toggle button
+      createToggleButton();
+      
+      startPopupInterval();
     }
+    
+    // Create toggle button to show/hide main chat button
+    function createToggleButton() {
+      var toggleBtn = document.createElement("button");
+      toggleBtn.id = "chat-toggle-btn";
+      toggleBtn.textContent = toggleMessages.close;
+      
+      // Positioning
+      toggleBtn.style.position = "fixed";
+      if (window.innerWidth <= 480) {
+        toggleBtn.style.right = "6px";
+        toggleBtn.style.bottom = "95px";  // Moved up from 105px
+      } else if (window.innerWidth <= 768) {
+        toggleBtn.style.right = "8px";
+        toggleBtn.style.bottom = "100px";  // Moved up from 110px
+      } else {
+        toggleBtn.style.right = "10px";
+        toggleBtn.style.bottom = "105px";  // Moved up from 115px
+      }
+      
+      // Styling
+      toggleBtn.style.zIndex = "99999";
+      toggleBtn.style.padding = "8px 16px";
+      toggleBtn.style.fontSize = "14px";
+      toggleBtn.style.fontWeight = "600";
+      toggleBtn.style.borderRadius = "20px";
+      toggleBtn.style.border = "2px solid #64a028";
+      toggleBtn.style.cursor = "pointer";
+      toggleBtn.style.backgroundColor = "#ffffff";
+      toggleBtn.style.color = "#64a028";
+      toggleBtn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+      toggleBtn.style.transition = "all 0.3s ease";
+      toggleBtn.style.fontFamily = "'Arial', sans-serif";
+      
+      // Hover effect
+      toggleBtn.addEventListener("mouseenter", function() {
+        toggleBtn.style.backgroundColor = "#64a028";
+        toggleBtn.style.color = "#ffffff";
+        toggleBtn.style.transform = "scale(1.05)";
+      });
+      
+      toggleBtn.addEventListener("mouseleave", function() {
+        toggleBtn.style.backgroundColor = "#ffffff";
+        toggleBtn.style.color = "#64a028";
+        toggleBtn.style.transform = "scale(1)";
+      });
+      
+      // Toggle functionality
+      toggleBtn.addEventListener("click", function() {
+        // Hide popup when toggle button is clicked
+        hidePopupTooltip();
+        
+        var mainBtn = document.getElementById("leap-chat-cta");
+        if (mainBtn) {
+          if (isChatButtonVisible) {
+            // Hide main button
+            mainBtn.style.display = "none";
+            toggleBtn.textContent = toggleMessages.open;
+            isChatButtonVisible = false;
+            stopPopupInterval();  // Stop popup when button is hidden
+          } else {
+            // Show main button
+            mainBtn.style.display = "inline-flex";
+            toggleBtn.textContent = toggleMessages.close;
+            isChatButtonVisible = true;
+            startPopupInterval();  // Restart popup when button is shown
+          }
+        }
+      });
+      
+      document.body.appendChild(toggleBtn);
+      console.log("Toggle button created");
+    }
+    
+    function startPopupInterval() {
+      setTimeout(function() {
+        if (!chatClicked) {
+          showPopupTooltip();
+        }
+      }, 5000);
+      
+      popupInterval = setInterval(function() {
+        if (!chatClicked) {
+          showPopupTooltip();
+        }
+      }, 60000);
+    }
+    
+    function stopPopupInterval() {
+      if (popupInterval) {
+        clearInterval(popupInterval);
+        popupInterval = null;
+        console.log('Popup interval stopped');
+      }
+    }
+    
+    function showPopupTooltip() {
+      var existingPopup = document.getElementById("chat-popup-tooltip");
+      if (existingPopup || chatClicked) return;
+      
+      var popup = document.createElement("div");
+      popup.id = "chat-popup-tooltip";
+      popup.className = "chat-popup-tooltip";
+      popup.textContent = popupMessage;
+      
+      popup.addEventListener("click", function(e) {
+        if (e.target.className === 'chat-popup-close') return;
+        
+        chatClicked = true;
+        hidePopupTooltip();
+        stopPopupInterval();
+        
+        if (embeddedServiceInstance && typeof embeddedServiceInstance.utilAPI.launchChat === "function") {
+          console.log("launchChat() from popup");
+          var r = embeddedServiceInstance.utilAPI.launchChat();
+          if (r && typeof r.then === "function") {
+            r.then(function () {
+              console.log("Chat launched from popup (Promise resolved)");
+            }).catch(function (err) {
+              console.error("Error launching chat from popup", err);
+            });
+          }
+        }
+      });
+      
+      var closeBtn = document.createElement("button");
+      closeBtn.className = "chat-popup-close";
+      closeBtn.textContent = "×";
+      closeBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        hidePopupTooltip();
+      });
+      
+      popup.appendChild(closeBtn);
+      document.body.appendChild(popup);
+      
+      playNotificationSound();
+      
+      setTimeout(function() {
+        hidePopupTooltip();
+      }, 10000);
+      
+      console.log("Popup tooltip shown");
+    }
+    
+    function hidePopupTooltip() {
+      var popup = document.getElementById("chat-popup-tooltip");
+      if (popup) {
+        popup.style.animation = "none";
+        popup.style.opacity = "0";
+        popup.style.transform = "translateY(20px) scale(0.8)";
+        setTimeout(function() {
+          if (popup.parentNode) {
+            popup.parentNode.removeChild(popup);
+          }
+        }, 300);
+        console.log("Popup tooltip hidden");
+      }
+    }
+    
     function hideCustomCTA() {
       var btn = document.getElementById("leap-chat-cta");
       if (btn) {
@@ -310,6 +714,23 @@
         console.log("Custom CTA hidden");
       }
     }
+    
+    function hideToggleButton() {
+      var toggleBtn = document.getElementById("chat-toggle-btn");
+      if (toggleBtn) {
+        toggleBtn.style.display = "none";
+        console.log("Toggle button hidden");
+      }
+    }
+    
+    function showToggleButton() {
+      var toggleBtn = document.getElementById("chat-toggle-btn");
+      if (toggleBtn) {
+        toggleBtn.style.display = "block";
+        console.log("Toggle button shown");
+      }
+    }
+    
     window.addEventListener("onEmbeddedMessagingButtonCreated", function () {
       console.log("onEmbeddedMessagingButtonCreated fired");
       var es = window.embeddedservice_bootstrap;
@@ -317,18 +738,23 @@
         showCustomCTA(es);
       }
     });
+    
     window.addEventListener("onEmbeddedMessagingWindowMaximized", function () {
       console.log("onEmbeddedMessagingWindowMaximized fired");
       hideCustomCTA();
+      hideToggleButton();  // Hide toggle button when chat opens
     });
+    
     window.addEventListener("onEmbeddedMessagingWindowMinimized", function () {
       console.log("onEmbeddedMessagingWindowMinimized fired");
       var es = window.embeddedservice_bootstrap;
       if (es) {
         hideStandardButton(es);
         showCustomCTA(es);
+        showToggleButton();  // Show toggle button when chat minimizes
       }
     });
+    
     function waitForES(maxAttempts, intervalMs) {
       var attempts = 0;
       (function check() {
@@ -346,10 +772,8 @@
         setTimeout(check, intervalMs);
       })();
     }
-    if (
-      document.readyState === "complete" ||
-      document.readyState === "interactive"
-    ) {
+    
+    if (document.readyState === "complete" || document.readyState === "interactive") {
       waitForES(50, 200);
     } else {
       window.addEventListener("DOMContentLoaded", function () {
@@ -358,15 +782,12 @@
     }
   })();
 </script>
-<script
-  type="text/javascript"
-  src="https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231/assets/js/bootstrap.min.js"
-  onload="initEmbeddedMessaging()"
-></script>
+<script type="text/javascript" src="https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231/assets/js/bootstrap.min.js" onload="initEmbeddedMessaging()"></scri
 	
 </body>
 
 </html>
+
 
 
 
