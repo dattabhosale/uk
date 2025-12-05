@@ -101,9 +101,9 @@
         'es': { name: 'Spain', language: 'es', code: 'es' },
         'fr': { name: 'France', language: 'fr', code: 'fr' },
         'de': { name: 'Germany', language: 'de', code: 'de' },
-        'uk': { name: 'United Kingdom', language: 'en_US', code: 'uk' },
-        'us': { name: 'United States', language: 'en_US', code: 'us' },
-        'en': { name: 'United States', language: 'en_US', code: 'en' }
+        'uk': { name: 'United Kingdom', language: 'en', code: 'uk' },
+        'us': { name: 'United States', language: 'en', code: 'us' },
+        'en': { name: 'United States', language: 'en', code: 'en' }
       };
       
       var countryInfo = countryMapping[countryCode] || countryMapping['en'];
@@ -182,13 +182,13 @@
     // Get localized toggle button messages
     function getLocalizedToggleMessages(countryCode) {
       var toggleMessages = {
-        'it': { open: 'Apri Chat', close: 'Chiudi Chat' },
-        'es': { open: 'Abrir Chat', close: 'Cerrar Chat' },
-        'fr': { open: 'Ouvrir Chat', close: 'Fermer Chat' },
-        'de': { open: 'Chat Öffnen', close: 'Chat Schließen' },
-        'uk': { open: 'Open Chat', close: 'Close Chat' },
-        'us': { open: 'Open Chat', close: 'Close Chat' },
-        'en': { open: 'Open Chat', close: 'Close Chat' }
+        'it': { open: 'Apri Chat', close: 'Minimizza' },
+        'es': { open: 'Abrir Chat', close: 'Minimizar' },
+        'fr': { open: 'Ouvrir Chat', close: 'Minimiser' },
+        'de': { open: 'Chat Öffnen', close: 'Minimieren' },
+        'uk': { open: 'Open Chat', close: 'Minimize' },
+        'us': { open: 'Open Chat', close: 'Minimize' },
+        'en': { open: 'Open Chat', close: 'Minimize' }
       };
       return toggleMessages[countryCode] || toggleMessages['en'];
     }
@@ -781,9 +781,11 @@
   })();
 </script>
 <script type="text/javascript" src="https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231/assets/js/bootstrap.min.js" onload="initEmbeddedMessaging()"></script>
+
 </body>
 
 </html>
+
 
 
 
