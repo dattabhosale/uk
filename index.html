@@ -164,6 +164,7 @@
     const ELEMENT_IDS = {
       CHAT_BUTTON: 'leap-chat-cta',
       TOGGLE_BUTTON: 'chat-toggle-btn',
+      CIRCLE_BUTTON: 'chat-circle-btn',
       STYLES: 'leap-chat-styles'
     };
     
@@ -224,7 +225,8 @@
       currentCarIndex: 0,
       carouselInterval: null,
       countryCode: getCountryCodeFromPath(),
-      localization: null
+      localization: null,
+      lastUsedButton: 'main' // Track which button was used: 'main' or 'circle'
     };
     
     // Initialize localization
@@ -249,6 +251,23 @@
         mobile: { right: '6px', bottom: isToggle ? '95px' : '12px' },
         tablet: { right: '8px', bottom: isToggle ? '100px' : '16px' },
         desktop: { right: '10px', bottom: isToggle ? '105px' : '24px' }
+      };
+      
+      if (width <= BREAKPOINTS.MOBILE) return positions.mobile;
+      if (width <= BREAKPOINTS.TABLET) return positions.tablet;
+      return positions.desktop;
+    }
+    
+    /**
+     * Get circle button position (below toggle button)
+     * @returns {Object} Position object with right and bottom values
+     */
+    function getCircleButtonPosition() {
+      const width = window.innerWidth;
+      const positions = {
+        mobile: { right: '17px', bottom: '12px' },
+        tablet: { right: '21px', bottom: '16px' },
+        desktop: { right: '25px', bottom: '24px' }
       };
       
       if (width <= BREAKPOINTS.MOBILE) return positions.mobile;
@@ -293,6 +312,17 @@
           }
         }
         
+        @keyframes circlePulse {
+          0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 30px rgba(100, 160, 40, 0.4); 
+          }
+          50% { 
+            transform: scale(1.05); 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 40px rgba(100, 160, 40, 0.6); 
+          }
+        }
+        
         #${ELEMENT_IDS.CHAT_BUTTON} {
           animation: energyFlow 3s ease infinite, electricPulse 2s ease-in-out infinite;
         }
@@ -306,6 +336,15 @@
           background-color: ${COLORS.PRIMARY} !important;
           color: ${COLORS.WHITE} !important;
           transform: scale(1.05) !important;
+        }
+        
+        #${ELEMENT_IDS.CIRCLE_BUTTON} {
+          animation: circlePulse 2s ease-in-out infinite;
+        }
+        
+        #${ELEMENT_IDS.CIRCLE_BUTTON}:hover {
+          transform: scale(1.1) !important;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 50px rgba(100, 160, 40, 0.7) !important;
         }
       `;
       document.head.appendChild(style);
@@ -330,8 +369,9 @@
     
     /**
      * Launch the chat window
+     * @param {string} buttonType - Type of button used: 'main' or 'circle'
      */
-    function launchChat() {
+    function launchChat(buttonType) {
       if (!state.embeddedServiceInstance || 
           !state.embeddedServiceInstance.utilAPI ||
           typeof state.embeddedServiceInstance.utilAPI.launchChat !== 'function') {
@@ -340,7 +380,8 @@
       }
       
       state.chatClicked = true;
-      console.log('Launching chat...');
+      state.lastUsedButton = buttonType || 'main';
+      console.log('Launching chat from ' + state.lastUsedButton + ' button...');
       
       const result = state.embeddedServiceInstance.utilAPI.launchChat();
       
@@ -387,6 +428,38 @@
     }
     
     /**
+     * Create modern chat icon for circle button
+     * @returns {HTMLElement} Configured chat icon element
+     */
+    function createChatIcon() {
+      const iconContainer = document.createElement('div');
+      iconContainer.innerHTML = `
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4C2.9 2 2.01 2.9 2.01 4L2 22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="white" opacity="0.95"/>
+          <circle cx="7" cy="10" r="1.5" fill="${COLORS.PRIMARY}">
+            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite" begin="0s"/>
+          </circle>
+          <circle cx="12" cy="10" r="1.5" fill="${COLORS.PRIMARY}">
+            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite" begin="0.2s"/>
+          </circle>
+          <circle cx="17" cy="10" r="1.5" fill="${COLORS.PRIMARY}">
+            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite" begin="0.4s"/>
+          </circle>
+        </svg>
+      `;
+      
+      applyStyles(iconContainer, {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      });
+      
+      return iconContainer;
+    }
+    
+    /**
      * Start the car carousel animation
      * @param {HTMLImageElement} carImg - Car image element
      */
@@ -408,6 +481,15 @@
           console.log('Showing car:', nextCar.name);
         }, TIMING.FADE_DURATION);
       }, TIMING.CAROUSEL_INTERVAL);
+    }
+    
+    /**
+     * No carousel needed for circle button - using static icon with CSS animations
+     */
+    function startCircleCarousel() {
+      // Circle button now uses SVG with built-in CSS animations
+      // No JavaScript carousel needed
+      return;
     }
     
     // ============================================================================
@@ -497,7 +579,9 @@
       btn.appendChild(logoImg);
       
       // Add event listeners
-      btn.addEventListener('click', launchChat);
+      btn.addEventListener('click', function() {
+        launchChat('main');
+      });
       btn.addEventListener('mouseenter', function() {
         btn.style.transform = 'scale(1.08)';
       });
@@ -507,6 +591,59 @@
       
       // Start carousel
       startCarousel(carImg);
+      
+      return btn;
+    }
+    
+    /**
+     * Create the circular chat button
+     * @returns {HTMLButtonElement} Configured circular button
+     */
+    function createCircleButton() {
+      const btn = document.createElement('button');
+      btn.id = ELEMENT_IDS.CIRCLE_BUTTON;
+      btn.setAttribute('aria-label', 'Open chat');
+      
+      const position = getCircleButtonPosition();
+      
+      applyStyles(btn, {
+        position: 'fixed',
+        right: position.right,
+        bottom: position.bottom,
+        zIndex: '99999',
+        width: '70px',
+        height: '70px',
+        borderRadius: '50%',
+        border: 'none',
+        cursor: 'pointer',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.25), 0 4px 12px rgba(100, 160, 40, 0.3)',
+        background: 'linear-gradient(135deg, ' + COLORS.PRIMARY + ' 0%, #7bc043 100%)',
+        color: COLORS.WHITE,
+        display: 'none',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        overflow: 'visible',
+        fontFamily: "'Arial', sans-serif"
+      });
+      
+      // Create chat icon
+      const chatIcon = createChatIcon();
+      btn.appendChild(chatIcon);
+      
+      // Add event listeners
+      btn.addEventListener('click', function() {
+        launchChat('circle');
+      });
+      btn.addEventListener('mouseenter', function() {
+        btn.style.transform = 'scale(1.1)';
+        btn.style.boxShadow = '0 12px 32px rgba(0,0,0,0.3), 0 6px 16px rgba(100, 160, 40, 0.5)';
+      });
+      btn.addEventListener('mouseleave', function() {
+        btn.style.transform = 'scale(1)';
+        btn.style.boxShadow = '0 8px 24px rgba(0,0,0,0.25), 0 4px 12px rgba(100, 160, 40, 0.3)';
+      });
       
       return btn;
     }
@@ -544,16 +681,19 @@
       // Toggle functionality
       toggleBtn.addEventListener('click', function() {
         const mainBtn = document.getElementById(ELEMENT_IDS.CHAT_BUTTON);
+        const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
         if (!mainBtn) return;
         
         state.isChatButtonVisible = !state.isChatButtonVisible;
         
         if (state.isChatButtonVisible) {
           mainBtn.style.display = 'inline-flex';
+          if (circleBtn) circleBtn.style.display = 'none';
           toggleBtn.textContent = state.localization.toggle.close;
           toggleBtn.setAttribute('aria-label', state.localization.toggle.close);
         } else {
           mainBtn.style.display = 'none';
+          if (circleBtn) circleBtn.style.display = 'flex';
           toggleBtn.textContent = state.localization.toggle.open;
           toggleBtn.setAttribute('aria-label', state.localization.toggle.open);
         }
@@ -580,6 +720,8 @@
       const existing = document.getElementById(ELEMENT_IDS.CHAT_BUTTON);
       if (existing) {
         existing.style.display = 'inline-flex';
+        const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
+        if (circleBtn) circleBtn.style.display = 'none';
         hideStandardButton(es);
         console.log('Custom CTA shown again');
         return;
@@ -591,15 +733,17 @@
       // Create and append buttons
       const chatButton = createChatButton();
       const toggleButton = createToggleButton();
+      const circleButton = createCircleButton();
       
       document.body.appendChild(chatButton);
       document.body.appendChild(toggleButton);
+      document.body.appendChild(circleButton);
       
       // Store instance and hide standard button
       state.embeddedServiceInstance = es;
       hideStandardButton(es);
       
-      console.log('Custom CTA created with Leapmotor electric car carousel');
+      console.log('Custom CTA created with Leapmotor electric car carousel and circle button');
     }
     
     /**
@@ -610,6 +754,12 @@
       if (btn) {
         btn.style.display = 'none';
         console.log('Custom CTA hidden');
+      }
+      
+      const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
+      if (circleBtn) {
+        circleBtn.style.display = 'none';
+        console.log('Circle button hidden');
       }
     }
     
@@ -657,7 +807,23 @@
       const es = window.embeddedservice_bootstrap;
       if (es) {
         hideStandardButton(es);
-        showCustomCTA(es);
+        
+        // Show the button that was last used
+        const mainBtn = document.getElementById(ELEMENT_IDS.CHAT_BUTTON);
+        const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
+        
+        if (state.lastUsedButton === 'circle') {
+          // Show circle button
+          if (mainBtn) mainBtn.style.display = 'none';
+          if (circleBtn) circleBtn.style.display = 'flex';
+          state.isChatButtonVisible = false;
+        } else {
+          // Show main button
+          if (mainBtn) mainBtn.style.display = 'inline-flex';
+          if (circleBtn) circleBtn.style.display = 'none';
+          state.isChatButtonVisible = true;
+        }
+        
         toggleButtonVisibility(true);
       }
     }
@@ -721,6 +887,7 @@
 </body>
 
 </html>
+
 
 
 
