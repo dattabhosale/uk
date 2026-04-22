@@ -173,7 +173,9 @@ function initEmbeddedMessaging() {
 
     embeddedservice_bootstrap.settings.language = countryInfo.language;
 
- 
+    if(countryInfo.code =='uk'){
+      embedded_svc.settings.smallCompanyLogoImgURL = "https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231/sfsites/c/resource/1765382650000/LeapmotorChat"
+    }
 
     window.addEventListener("onEmbeddedMessagingReady", function() {
 
