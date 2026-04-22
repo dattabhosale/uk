@@ -173,6 +173,26 @@ function initEmbeddedMessaging() {
 
     embeddedservice_bootstrap.settings.language = countryInfo.language;
 
+    
+    // Assign default config values
+    let deploymentName = ESW_CONFIG.DEPLOYMENT_NAME;
+    let siteUrl = ESW_CONFIG.SITE_URL;
+    let scrt2Url = ESW_CONFIG.SCRT2_URL;
+
+    if(countryInfo.code === 'uk'){
+      console.log('In if block - applying UK specific config');
+      
+      // Update variables for UK
+      deploymentName = 'LPM_Leapmotor_UK';
+      siteUrl = 'https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotorUK1776851508682';
+      scrt2Url = 'https://leapmotor--dev01.sandbox.my.salesforce-scrt.com';
+
+      // Check for legacy embedded_svc object before setting to prevent ReferenceError
+      if(typeof embedded_svc !== 'undefined') {
+        embedded_svc.settings.smallCompanyLogoImgURL = "https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231/sfsites/c/resource/1765382650000/LeapmotorChat"
+      }
+    }
+
     window.addEventListener("onEmbeddedMessagingReady", function() {
 
       embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
@@ -189,15 +209,16 @@ function initEmbeddedMessaging() {
 
  
 
+    // Init using dynamically assigned variables
     embeddedservice_bootstrap.init(
 
       ESW_CONFIG.ORG_ID,
 
-      ESW_CONFIG.DEPLOYMENT_NAME,
+      deploymentName,
 
-      ESW_CONFIG.SITE_URL,
+      siteUrl,
 
-      { scrt2URL: ESW_CONFIG.SCRT2_URL }
+      { scrt2URL: scrt2Url }
 
     );
 
@@ -1846,3 +1867,4 @@ function initEmbeddedMessaging() {
 
 </body>
 </html>
+
