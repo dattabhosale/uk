@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximun-scale=1.0" />
   <title>LeapReplica - Electric Vehicles</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +15,7 @@
       <a href="/" class="brand">LeapReplica</a>
       <nav class="site-nav" id="site-nav">
         <a href="index.html">Home</a>
+        <a href="service.html">Service</a>
         <a href="products.html">Products</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
@@ -22,7 +23,6 @@
       <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">☰</button>
     </div>
   </header>
-
   <main>
     <section class="hero">
       <div class="container hero-inner">
@@ -36,7 +36,6 @@
         </div>
       </div>
     </section>
-
     <section class="highlights">
       <div class="container">
         <h2>Featured Models</h2>
@@ -47,14 +46,12 @@
             <p>Long range, fast charging, advanced driver assistance.</p>
             <p><a class="link" href="products.html">Learn more</a></p>
           </article>
-
           <article class="card">
             <img src="assets/model-b.jpg" alt="Model B">
             <h3>Model B</h3>
             <p>Urban performance with compact design and premium interior.</p>
             <p><a class="link" href="products.html">Learn more</a></p>
           </article>
-
           <article class="card">
             <img src="assets/model-c.jpg" alt="Model C">
             <h3>Model C</h3>
@@ -64,16 +61,15 @@
         </div>
       </div>
     </section>
-
     <section class="about-teaser">
       <div class="container">
         <h2>Our Vision</h2>
-        <p>We build electric vehicles that are safe, sustainable and delightful to drive. Technology and design come together to make mobility more efficient and enjoyable.</p>
+        <p>We build electric vehicles that are safe, sustainable and delightful to drive. Technology and design come
+          together to make mobility more efficient and enjoyable.</p>
         <p><a class="btn ghost" href="about.html">Learn about us</a></p>
       </div>
     </section>
   </main>
-
   <footer class="site-footer">
     <div class="container">
       <div>© 2025 LeapReplica</div>
@@ -83,827 +79,1772 @@
       </nav>
     </div>
   </footer>
-	<script type='text/javascript'>
-  /**
-   * Initialize Salesforce Embedded Messaging with country-specific settings
-   */
-  function initEmbeddedMessaging() {
-    try {
-      const countryCode = getCountryCodeFromPath();
-      const countryInfo = getCountryInfo(countryCode);
-      
-      // Configure embedded service settings
-      embeddedservice_bootstrap.settings.language = countryInfo.language;
-      embeddedservice_bootstrap.settings.shouldOpenLinksInSameTab = true;
-      embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
-      
-      console.log('Detected country code:', countryCode, '| Setting language to:', countryInfo.language);
-      
-      // Set prechat fields when ready
-      window.addEventListener("onEmbeddedMessagingReady", function() {
-        embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
-          Country: countryInfo.name,
-          Language: countryInfo.language,
-          CountryCode: countryInfo.code,
-        });
+<script type="text/javascript">
+
+/**
+
+* Salesforce Embedded Messaging - Improved Implementation
+
+* Fixes: Dynamic country settings, race conditions, performance optimizations
+
+*/
+
+// ======================== CONFIGURATION =========================
+
+const ESW_CONFIG = {
+
+  ORG_ID: '00DMA000003XnGM',
+
+  DEPLOYMENT_NAME: 'LPM_Leapmotor',
+
+  SITE_URL: 'https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231',
+
+  SCRT2_URL: 'https://leapmotor--dev01.sandbox.my.salesforce-scrt.com',
+
+ 
+
+  COUNTRY_MAPPING: {
+
+    'it': { name: 'Italy', language: 'it', code: 'it' },
+
+    'es': { name: 'Spain', language: 'es', code: 'es' },
+
+    'fr': { name: 'France', language: 'fr', code: 'fr' },
+
+    'de': { name: 'Germany', language: 'de', code: 'de' },
+
+    'uk': { name: 'United Kingdom', language: 'en_US', code: 'uk' },
+
+    'us': { name: 'United States', language: 'en_US', code: 'us' },
+
+    'be-fr': { name: 'Belgium_FR', language: 'fr', code: 'be' },
+
+    'be-nl': { name: 'Belgium_NL', language: 'nl_NL', code: 'be' },
+
+    'en': { name: 'United States', language: 'en_US', code: 'en' }
+
+  },
+
+ 
+
+  DEFAULT_COUNTRY: 'en'
+
+};
+
+ 
+
+function getCountryCodeFromPath() {
+
+  const pathParts = window.location.pathname
+
+    .split('/')
+
+    .filter(function(part) { return part.length > 0; });
+
+ 
+
+  return pathParts.length > 0 ? pathParts[0].toLowerCase() : ESW_CONFIG.DEFAULT_COUNTRY;
+
+}
+
+ 
+
+function getCountryInfo(countryCode) {
+
+  return ESW_CONFIG.COUNTRY_MAPPING[countryCode] ||
+
+         ESW_CONFIG.COUNTRY_MAPPING[ESW_CONFIG.DEFAULT_COUNTRY];
+
+}
+
+ 
+
+function initEmbeddedMessaging() {
+
+  try {
+
+    const countryCode = getCountryCodeFromPath();
+
+    const countryInfo = getCountryInfo(countryCode);
+
+ 
+
+    embeddedservice_bootstrap.settings.shouldOpenLinksInSameTab = true;
+
+    embeddedservice_bootstrap.settings.language = countryInfo.language;
+
+ 
+
+    window.addEventListener("onEmbeddedMessagingReady", function() {
+
+      embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
+
+        Country: countryInfo.name,
+
+        Language: countryInfo.language,
+
+        CountryCode: countryInfo.code
+
       });
-      
-      // Initialize embedded service
-      embeddedservice_bootstrap.init(
-        "00DMA000003XnGM",
-        "LPM_Leapmotor",
-        "https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231",
-        {
-          scrt2URL: "https://leapmotor--dev01.sandbox.my.salesforce-scrt.com",
-        }
-      );
-    } catch (err) {
-      console.error("Error loading Embedded Messaging:", err);
-    }
+
+    });
+
+ 
+
+    embeddedservice_bootstrap.init(
+
+      ESW_CONFIG.ORG_ID,
+
+      ESW_CONFIG.DEPLOYMENT_NAME,
+
+      ESW_CONFIG.SITE_URL,
+
+      { scrt2URL: ESW_CONFIG.SCRT2_URL }
+
+    );
+
+  } catch (err) {
+
+    console.error('[ESW] Error loading Embedded Messaging:', err);
+
   }
-  /**
-   * Extract country code from URL pathname
-   * @returns {string} Country code (defaults to 'en')
-   */
-  function getCountryCodeFromPath() {
-    const pathParts = window.location.pathname
-      .split('/')
-      .filter(function(part) { return part.length > 0; });
-    
-    return pathParts.length > 0 ? pathParts[0].toLowerCase() : 'en';
-  }
-  /**
-   * Get country information based on country code
-   * @param {string} countryCode - Two-letter country code
-   * @returns {Object} Country information object
-   */
-  function getCountryInfo(countryCode) {
-    const COUNTRY_MAPPING = {
-      'it': { name: 'Italy', language: 'it', code: 'it' },
-      'es': { name: 'Spain', language: 'es', code: 'es' },
-      'fr': { name: 'France', language: 'fr', code: 'fr' },
-      'de': { name: 'Germany', language: 'de', code: 'de' },
-      'uk': { name: 'United Kingdom', language: 'en_US', code: 'uk' },
-      'us': { name: 'United States', language: 'en_US', code: 'us' },
-      'en': { name: 'United States', language: 'en_US', code: 'en' }
-    };
-    
-    return COUNTRY_MAPPING[countryCode] || COUNTRY_MAPPING['en'];
-  }
-  /**
-   * Custom Chat Button Module
-   * Handles creation and management of custom Leapmotor chat button
-   */
-  (function() {
-    'use strict';
-    
-    // ============================================================================
-    // CONSTANTS
-    // ============================================================================
-    
-    const ELEMENT_IDS = {
-      CHAT_BUTTON: 'leap-chat-cta',
-      TOGGLE_BUTTON: 'chat-toggle-btn',
-      CIRCLE_BUTTON: 'chat-circle-btn',
-      STYLES: 'leap-chat-styles'
-    };
-    
-    const BREAKPOINTS = {
-      MOBILE: 480,
-      TABLET: 768
-    };
-    
-    const TIMING = {
-      CAROUSEL_INTERVAL: 3000,
-      FADE_DURATION: 500,
-      POLLING_INTERVAL: 200,
-      MAX_POLLING_ATTEMPTS: 50
-    };
-    
-    const COLORS = {
-      PRIMARY: '#64a028',
-      WHITE: '#ffffff'
-    };
-    
-    const CAR_MODELS = [
-      { name: 'model1', url: 'assets/model1.png' },
-      { name: 'model2', url: 'assets/model2.png' },
-      { name: 'model3', url: 'assets/model3.png' },
-      { name: 'model4', url: 'assets/model4.png' },
-      { name: 'model5', url: 'assets/model5.png' }
-    ];
-    
-    const LOCALIZATION = {
-      MESSAGES: {
-        'it': 'Chatta con me!',
-        'es': '¡Chatea conmigo!',
-        'fr': 'Discutez avec moi!',
-        'de': 'Chatte mit mir!',
-        'uk': 'Chat with me!',
-        'us': 'Chat with me!',
-        'en': 'Chat with me!'
-      },
-      TOGGLE: {
-        'it': { open: 'Massimizza', close: 'Minimizza' },
-        'es': { open: 'Maximizar', close: 'Minimizar' },
-        'fr': { open: 'Maximiser', close: 'Minimiser' },
-        'de': { open: 'Maximieren', close: 'Minimieren' },
-        'uk': { open: 'Maximize', close: 'Minimize' },
-        'us': { open: 'Maximize', close: 'Minimize' },
-        'en': { open: 'Maximize', close: 'Minimize' }
-      }
-    };
-    
-    // ============================================================================
-    // STATE
-    // ============================================================================
-    
-    const state = {
-      chatClicked: false,
-      isChatButtonVisible: true,
-      embeddedServiceInstance: null,
-      currentCarIndex: 0,
-      carouselInterval: null,
-      countryCode: getCountryCodeFromPath(),
-      localization: null,
-      lastUsedButton: 'main' // Track which button was used: 'main' or 'circle'
-    };
-    
-    // Initialize localization
-    state.localization = {
-      message: LOCALIZATION.MESSAGES[state.countryCode] || LOCALIZATION.MESSAGES['en'],
-      toggle: LOCALIZATION.TOGGLE[state.countryCode] || LOCALIZATION.TOGGLE['en']
-    };
-    
-    console.log('Detected country:', state.countryCode, '| Message:', state.localization.message);
-    
-    // ============================================================================
-    // UTILITY FUNCTIONS
-    // ============================================================================
-    
-    /**
-     * Get responsive positioning based on screen width
-     * @returns {Object} Position object with right and bottom values
-     */
-    function getResponsivePosition(isToggle) {
-      const width = window.innerWidth;
-      const positions = {
-        mobile: { right: '6px', bottom: isToggle ? '95px' : '12px' },
-        tablet: { right: '8px', bottom: isToggle ? '100px' : '16px' },
-        desktop: { right: '10px', bottom: isToggle ? '105px' : '24px' }
-      };
-      
-      if (width <= BREAKPOINTS.MOBILE) return positions.mobile;
-      if (width <= BREAKPOINTS.TABLET) return positions.tablet;
-      return positions.desktop;
-    }
-    
-    /**
-     * Get circle button position (below toggle button)
-     * @returns {Object} Position object with right and bottom values
-     */
-    function getCircleButtonPosition() {
-      const width = window.innerWidth;
-      const positions = {
-        mobile: { right: '17px', bottom: '12px' },
-        tablet: { right: '21px', bottom: '16px' },
-        desktop: { right: '25px', bottom: '24px' }
-      };
-      
-      if (width <= BREAKPOINTS.MOBILE) return positions.mobile;
-      if (width <= BREAKPOINTS.TABLET) return positions.tablet;
-      return positions.desktop;
-    }
-    
-    /**
-     * Apply multiple styles to an element
-     * @param {HTMLElement} element - Target element
-     * @param {Object} styles - Styles object
-     */
-    function applyStyles(element, styles) {
-      Object.keys(styles).forEach(function(key) {
-        element.style[key] = styles[key];
-      });
-    }
-    
-    /**
-     * Create and append stylesheet to document head
-     */
-    function injectStyles() {
-      if (document.getElementById(ELEMENT_IDS.STYLES)) return;
-      
-      const style = document.createElement('style');
-      style.id = ELEMENT_IDS.STYLES;
-      style.textContent = `
-        @keyframes energyFlow {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        
-        @keyframes electricPulse {
-          0%, 100% { 
-            transform: scale(1); 
-            box-shadow: 0 12px 32px rgba(0,0,0,0.3), 0 0 40px rgba(0, 150, 255, 0.3); 
-          }
-          50% { 
-            transform: scale(1.02); 
-            box-shadow: 0 12px 32px rgba(0,0,0,0.3), 0 0 50px rgba(0, 200, 255, 0.5); 
-          }
-        }
-        
-        @keyframes circlePulse {
-          0%, 100% { 
-            transform: scale(1); 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 30px rgba(100, 160, 40, 0.4); 
-          }
-          50% { 
-            transform: scale(1.05); 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 40px rgba(100, 160, 40, 0.6); 
-          }
-        }
-        
-        #${ELEMENT_IDS.CHAT_BUTTON} {
-          animation: energyFlow 3s ease infinite, electricPulse 2s ease-in-out infinite;
-        }
-        
-        #${ELEMENT_IDS.CHAT_BUTTON}:hover {
-          transform: scale(1.08) !important;
-          box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 60px rgba(0, 200, 255, 0.6) !important;
-        }
-        
-        #${ELEMENT_IDS.TOGGLE_BUTTON}:hover {
-          background-color: ${COLORS.PRIMARY} !important;
-          color: ${COLORS.WHITE} !important;
-          transform: scale(1.05) !important;
-        }
-        
-        #${ELEMENT_IDS.CIRCLE_BUTTON} {
-          animation: circlePulse 2s ease-in-out infinite;
-        }
-        
-        #${ELEMENT_IDS.CIRCLE_BUTTON}:hover {
-          transform: scale(1.1) !important;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 50px rgba(100, 160, 40, 0.7) !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-    
-    /**
-     * Hide the standard Salesforce chat button
-     * @param {Object} es - Embedded service instance
-     */
-    function hideStandardButton(es) {
-      if (!es || !es.utilAPI || typeof es.utilAPI.hideChatButton !== 'function') {
-        return;
-      }
-      
-      try {
-        es.utilAPI.hideChatButton();
-        console.log('Standard chat button hidden');
-      } catch (error) {
-        console.warn('Error hiding standard chat button:', error);
-      }
-    }
-    
-    /**
-     * Launch the chat window
-     * @param {string} buttonType - Type of button used: 'main' or 'circle'
-     */
-    function launchChat(buttonType) {
-      if (!state.embeddedServiceInstance || 
-          !state.embeddedServiceInstance.utilAPI ||
-          typeof state.embeddedServiceInstance.utilAPI.launchChat !== 'function') {
-        console.warn('launchChat() not available');
-        return;
-      }
-      
-      state.chatClicked = true;
-      state.lastUsedButton = buttonType || 'main';
-      console.log('Launching chat from ' + state.lastUsedButton + ' button...');
-      
-      const result = state.embeddedServiceInstance.utilAPI.launchChat();
-      
-      if (result && typeof result.then === 'function') {
-        result
-          .then(function() {
-            console.log('Chat launched successfully');
-          })
-          .catch(function(error) {
-            console.error('Error launching chat:', error);
-          });
-      }
-    }
-    
-    // ============================================================================
-    // CAR CAROUSEL
-    // ============================================================================
-    
-    /**
-     * Create car image element with styling
-     * @returns {HTMLImageElement} Configured car image element
-     */
-    function createCarImage() {
-      const img = document.createElement('img');
-      img.src = CAR_MODELS[0].url;
-      img.alt = CAR_MODELS[0].name;
-      
-      applyStyles(img, {
-        width: '100%',
-        height: '100%',
-        objectFit: 'contain',
-        display: 'block',
-        transition: 'opacity 0.5s ease, transform 0.3s ease',
-        filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.2)) brightness(1.15) contrast(1.08) saturate(1.1)',
-        background: 'rgba(255, 255, 255, 0.15)',
-        borderRadius: '16px',
-        padding: '8px',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.3)',
-        backdropFilter: 'blur(10px)'
-      });
-      
-      return img;
-    }
-    
-    /**
-     * Create modern chat icon for circle button
-     * @returns {HTMLElement} Configured chat icon element
-     */
-    function createChatIcon() {
-      const iconContainer = document.createElement('div');
-      iconContainer.innerHTML = `
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20 2H4C2.9 2 2.01 2.9 2.01 4L2 22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="white" opacity="0.95"/>
-          <circle cx="7" cy="10" r="1.5" fill="${COLORS.PRIMARY}">
-            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite" begin="0s"/>
-          </circle>
-          <circle cx="12" cy="10" r="1.5" fill="${COLORS.PRIMARY}">
-            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite" begin="0.2s"/>
-          </circle>
-          <circle cx="17" cy="10" r="1.5" fill="${COLORS.PRIMARY}">
-            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite" begin="0.4s"/>
-          </circle>
-        </svg>
-      `;
-      
-      applyStyles(iconContainer, {
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      });
-      
-      return iconContainer;
-    }
-    
-    /**
-     * Start the car carousel animation
-     * @param {HTMLImageElement} carImg - Car image element
-     */
-    function startCarousel(carImg) {
-      // Clear any existing interval
-      if (state.carouselInterval) {
-        clearInterval(state.carouselInterval);
-      }
-      
-      state.carouselInterval = setInterval(function() {
-        carImg.style.opacity = '0';
-        
-        setTimeout(function() {
-          state.currentCarIndex = (state.currentCarIndex + 1) % CAR_MODELS.length;
-          const nextCar = CAR_MODELS[state.currentCarIndex];
-          carImg.src = nextCar.url;
-          carImg.alt = nextCar.name;
-          carImg.style.opacity = '1';
-          console.log('Showing car:', nextCar.name);
-        }, TIMING.FADE_DURATION);
-      }, TIMING.CAROUSEL_INTERVAL);
-    }
-    
-    /**
-     * No carousel needed for circle button - using static icon with CSS animations
-     */
-    function startCircleCarousel() {
-      // Circle button now uses SVG with built-in CSS animations
-      // No JavaScript carousel needed
-      return;
-    }
-    
-    // ============================================================================
-    // BUTTON CREATION
-    // ============================================================================
-    
-    /**
-     * Create the main chat button
-     * @returns {HTMLButtonElement} Configured chat button
-     */
-    function createChatButton() {
-      const btn = document.createElement('button');
-      btn.id = ELEMENT_IDS.CHAT_BUTTON;
-      btn.setAttribute('aria-label', state.localization.message);
-      
-      const position = getResponsivePosition(false);
-      
-      applyStyles(btn, {
-        position: 'fixed',
-        right: position.right,
-        bottom: position.bottom,
-        zIndex: '99999',
-        padding: '11px 39px',
-        fontSize: '22px',
-        fontWeight: '700',
-        borderRadius: '999px',
-        border: 'none',
-        cursor: 'pointer',
-        boxShadow: '0 12px 32px rgba(0,0,0,0.3), 0 0 40px rgba(100, 160, 40, 0.4)',
-        background: COLORS.PRIMARY,
-        backgroundSize: '200% 200%',
-        color: COLORS.WHITE,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '18px',
-        transition: 'all 0.3s ease',
-        overflow: 'visible',
-        fontFamily: "'Arial', sans-serif",
-        textShadow: '3px 3px 6px rgba(0,0,0,0.4)',
-        minWidth: '284px',
-        minHeight: '77px'
-      });
-      
-      // Create icon container with car carousel
-      const iconContainer = document.createElement('div');
-      applyStyles(iconContainer, {
-        position: 'relative',
-        width: '85px',
-        height: '60px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden'
-      });
-      
-      const carImg = createCarImage();
-      iconContainer.appendChild(carImg);
-      
-      // Create text span
-      const textSpan = document.createElement('span');
-      textSpan.textContent = state.localization.message;
-      textSpan.style.letterSpacing = '0.5px';
-      
-      // Create logo
-      const logoImg = document.createElement('img');
-      logoImg.src = 'assets/Leapmotor.png';
-      logoImg.alt = 'Leapmotor';
-      
-      applyStyles(logoImg, {
-        height: '42px',
-        width: 'auto',
-        objectFit: 'contain',
-        marginLeft: '16px',
-        opacity: '1',
-        filter: 'drop-shadow(0 3px 10px rgba(0,0,0,0.2)) brightness(1.25) contrast(1.08)',
-        background: 'transparent',
-        padding: '0',
-        borderRadius: '0',
-        border: 'none',
-        boxShadow: 'none'
-      });
-      
-      // Assemble button
-      btn.appendChild(iconContainer);
-      btn.appendChild(textSpan);
-      btn.appendChild(logoImg);
-      
-      // Add event listeners
-      btn.addEventListener('click', function() {
-        launchChat('main');
-      });
-      btn.addEventListener('mouseenter', function() {
-        btn.style.transform = 'scale(1.08)';
-      });
-      btn.addEventListener('mouseleave', function() {
-        btn.style.transform = 'scale(1)';
-      });
-      
-      // Start carousel
-      startCarousel(carImg);
-      
-      return btn;
-    }
-    
-    /**
-     * Create the circular chat button
-     * @returns {HTMLButtonElement} Configured circular button
-     */
-    function createCircleButton() {
-      const btn = document.createElement('button');
-      btn.id = ELEMENT_IDS.CIRCLE_BUTTON;
-      btn.setAttribute('aria-label', 'Open chat');
-      
-      const position = getCircleButtonPosition();
-      
-      applyStyles(btn, {
-        position: 'fixed',
-        right: position.right,
-        bottom: position.bottom,
-        zIndex: '99999',
-        width: '70px',
-        height: '70px',
-        borderRadius: '50%',
-        border: 'none',
-        cursor: 'pointer',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.25), 0 4px 12px rgba(100, 160, 40, 0.3)',
-        background: 'linear-gradient(135deg, ' + COLORS.PRIMARY + ' 0%, #7bc043 100%)',
-        color: COLORS.WHITE,
-        display: 'none',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        overflow: 'visible',
-        fontFamily: "'Arial', sans-serif"
-      });
-      
-      // Create chat icon
-      const chatIcon = createChatIcon();
-      btn.appendChild(chatIcon);
-      
-      // Add event listeners
-      btn.addEventListener('click', function() {
-        launchChat('circle');
-      });
-      btn.addEventListener('mouseenter', function() {
-        btn.style.transform = 'scale(1.1)';
-        btn.style.boxShadow = '0 12px 32px rgba(0,0,0,0.3), 0 6px 16px rgba(100, 160, 40, 0.5)';
-      });
-      btn.addEventListener('mouseleave', function() {
-        btn.style.transform = 'scale(1)';
-        btn.style.boxShadow = '0 8px 24px rgba(0,0,0,0.25), 0 4px 12px rgba(100, 160, 40, 0.3)';
-      });
-      
-      return btn;
-    }
-    
-    /**
-     * Create the toggle button
-     * @returns {HTMLButtonElement} Configured toggle button
-     */
-    function createToggleButton() {
-      const toggleBtn = document.createElement('button');
-      toggleBtn.id = ELEMENT_IDS.TOGGLE_BUTTON;
-      toggleBtn.textContent = state.localization.toggle.close;
-      toggleBtn.setAttribute('aria-label', state.localization.toggle.close);
-      
-      const position = getResponsivePosition(true);
-      
-      applyStyles(toggleBtn, {
-        position: 'fixed',
-        right: position.right,
-        bottom: position.bottom,
-        zIndex: '99999',
-        padding: '8px 16px',
-        fontSize: '14px',
-        fontWeight: '600',
-        borderRadius: '20px',
-        border: '2px solid ' + COLORS.PRIMARY,
-        cursor: 'pointer',
-        backgroundColor: COLORS.WHITE,
-        color: COLORS.PRIMARY,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-        transition: 'all 0.3s ease',
-        fontFamily: "'Arial', sans-serif"
-      });
-      
-      // Toggle functionality
-      toggleBtn.addEventListener('click', function() {
-        const mainBtn = document.getElementById(ELEMENT_IDS.CHAT_BUTTON);
-        const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
-        if (!mainBtn) return;
-        
-        state.isChatButtonVisible = !state.isChatButtonVisible;
-        
-        if (state.isChatButtonVisible) {
-          mainBtn.style.display = 'inline-flex';
-          if (circleBtn) circleBtn.style.display = 'none';
-          toggleBtn.textContent = state.localization.toggle.close;
-          toggleBtn.setAttribute('aria-label', state.localization.toggle.close);
-        } else {
-          mainBtn.style.display = 'none';
-          if (circleBtn) circleBtn.style.display = 'flex';
-          toggleBtn.textContent = state.localization.toggle.open;
-          toggleBtn.setAttribute('aria-label', state.localization.toggle.open);
-        }
-      });
-      
-      return toggleBtn;
-    }
-    
-    // ============================================================================
-    // BUTTON VISIBILITY MANAGEMENT
-    // ============================================================================
-    
-    /**
-     * Show the custom chat button
-     * @param {Object} es - Embedded service instance
-     */
-    function showCustomCTA(es) {
-      if (!es || !es.utilAPI) {
-        console.warn('utilAPI not available');
-        return;
-      }
-      
-      // Check if button already exists
-      const existing = document.getElementById(ELEMENT_IDS.CHAT_BUTTON);
-      if (existing) {
-        existing.style.display = 'inline-flex';
-        const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
-        if (circleBtn) circleBtn.style.display = 'none';
-        hideStandardButton(es);
-        console.log('Custom CTA shown again');
-        return;
-      }
-      
-      // Inject styles
-      injectStyles();
-      
-      // Create and append buttons
-      const chatButton = createChatButton();
-      const toggleButton = createToggleButton();
-      const circleButton = createCircleButton();
-      
-      document.body.appendChild(chatButton);
-      document.body.appendChild(toggleButton);
-      document.body.appendChild(circleButton);
-      
-      // Store instance and hide standard button
-      state.embeddedServiceInstance = es;
-      hideStandardButton(es);
-      
-      console.log('Custom CTA created with Leapmotor electric car carousel and circle button');
-    }
-    
-    /**
-     * Hide the custom chat button
-     */
-    function hideCustomCTA() {
-      const btn = document.getElementById(ELEMENT_IDS.CHAT_BUTTON);
-      if (btn) {
-        btn.style.display = 'none';
-        console.log('Custom CTA hidden');
-      }
-      
-      const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
-      if (circleBtn) {
-        circleBtn.style.display = 'none';
-        console.log('Circle button hidden');
-      }
-    }
-    
-    /**
-     * Toggle visibility of toggle button
-     * @param {boolean} show - Whether to show or hide
-     */
-    function toggleButtonVisibility(show) {
-      const toggleBtn = document.getElementById(ELEMENT_IDS.TOGGLE_BUTTON);
-      if (toggleBtn) {
-        toggleBtn.style.display = show ? 'block' : 'none';
-        console.log('Toggle button ' + (show ? 'shown' : 'hidden'));
-      }
-    }
-    
-    // ============================================================================
-    // EVENT HANDLERS
-    // ============================================================================
-    
-    /**
-     * Handle button created event
-     */
-    function handleButtonCreated() {
-      console.log('onEmbeddedMessagingButtonCreated fired');
-      const es = window.embeddedservice_bootstrap;
-      if (es) {
-        showCustomCTA(es);
-      }
-    }
-    
-    /**
-     * Handle window maximized event
-     */
-    function handleWindowMaximized() {
-      console.log('onEmbeddedMessagingWindowMaximized fired');
-      hideCustomCTA();
-      toggleButtonVisibility(false);
-    }
-    
-    /**
-     * Handle window minimized event
-     */
-    function handleWindowMinimized() {
-      console.log('onEmbeddedMessagingWindowMinimized fired');
-      const es = window.embeddedservice_bootstrap;
-      if (es) {
-        hideStandardButton(es);
-        
-        // Show the button that was last used
-        const mainBtn = document.getElementById(ELEMENT_IDS.CHAT_BUTTON);
-        const circleBtn = document.getElementById(ELEMENT_IDS.CIRCLE_BUTTON);
-        
-        if (state.lastUsedButton === 'circle') {
-          // Show circle button
-          if (mainBtn) mainBtn.style.display = 'none';
-          if (circleBtn) circleBtn.style.display = 'flex';
-          state.isChatButtonVisible = false;
-        } else {
-          // Show main button
-          if (mainBtn) mainBtn.style.display = 'inline-flex';
-          if (circleBtn) circleBtn.style.display = 'none';
-          state.isChatButtonVisible = true;
-        }
-        
-        toggleButtonVisibility(true);
-      }
-    }
-    
-    // ============================================================================
-    // INITIALIZATION
-    // ============================================================================
-    
-    /**
-     * Poll for embedded service availability
-     */
-    function waitForEmbeddedService() {
-      let attempts = 0;
-      
-      (function check() {
-        attempts++;
-        const es = window.embeddedservice_bootstrap;
-        
-        if (es && es.utilAPI) {
-          console.log('utilAPI ready');
-          showCustomCTA(es);
-          return;
-        }
-        
-        if (attempts >= TIMING.MAX_POLLING_ATTEMPTS) {
-          console.warn('utilAPI not found after ' + attempts + ' attempts');
-          return;
-        }
-        
-        setTimeout(check, TIMING.POLLING_INTERVAL);
-      })();
-    }
-    
-    /**
-     * Initialize the custom chat button
-     */
-    function init() {
-      // Register event listeners
-      window.addEventListener('onEmbeddedMessagingButtonCreated', handleButtonCreated);
-      window.addEventListener('onEmbeddedMessagingWindowMaximized', handleWindowMaximized);
-      window.addEventListener('onEmbeddedMessagingWindowMinimized', handleWindowMinimized);
-      
-      // Start polling for embedded service
-      if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        waitForEmbeddedService();
-      } else {
-        window.addEventListener('DOMContentLoaded', waitForEmbeddedService);
-      }
-    }
-    
-    // Start initialization
-    init();
-  })();
+
+}
+
 </script>
+
+ 
+
+<!-- ======================== ADVANCED CONTROL ======================== -->
+
+<script type="text/javascript">
+
+(function () {
+
+  'use strict';
+
+ 
+
+  /* ====== Configuration ====== */
+
+  const CONFIG = {
+
+    NUDGE_DELAY_MS: 30000,
+
+    DESKTOP_MIN_WIDTH: 1025,
+
+    STATE_POLL_INTERVAL_MS: 1000,
+
+    MIN_CHAT_HEIGHT: 150,
+
+    MIN_CHAT_WIDTH: 200,
+
+    RETRY_DELAYS: [80, 220, 500]
+
+  };
+
+ 
+
+  const MESSAGES = {
+
+    es: { first: '¡Habla conmigo!', followup: '¡Sigue hablándome!' },
+
+    it: { first: 'Parlami!', followup: 'Continua a parlarmi!' },
+
+    fr: { first: 'Parle-moi!', followup: 'Continue de me parler!' },
+
+    de: { first: 'Sprich mit mir!', followup: 'Sprich weiter mit mir!' },
+
+    en: { first: 'Talk to me!', followup: 'Keep talking to me!' },
+
+    uk: { first: 'Talk to me!', followup: 'Keep talking to me!' },
+
+    us: { first: 'Talk to me!', followup: 'Keep talking to me!' },
+
+    'be-fr': { first: 'Parle-moi!', followup: 'Continue de me parler!' },
+
+    'be-nl': { first: 'Praat met me!', followup: 'Praat verder met me!' }
+
+  };
+
+ 
+
+  /* ====== State ====== */
+
+  const state = {
+
+    chatEverOpened: false,
+
+    chatCurrentlyOpen: false,
+
+    nudgeElement: null,
+
+    nudgeBottomPosition: null,
+
+    timers: { first: null, followup: null },
+
+    observers: { launcher: null, body: null, fixedRoot: null, statePoller: null }
+
+  };
+
+ 
+
+  /* ====== Utility ====== */
+
+  const isMobile = () => window.innerWidth < CONFIG.DESKTOP_MIN_WIDTH;
+
+ 
+
+  function getCountryCode() { return getCountryCodeFromPath(); }
+
+  function getLocalizedMessages() {
+
+    const code = getCountryCode();
+
+    return MESSAGES[code] || MESSAGES.en;
+
+  }
+
+ 
+
+  function clearTimer(timerName) {
+
+    if (state.timers[timerName]) {
+
+      clearTimeout(state.timers[timerName]);
+
+      state.timers[timerName] = null;
+
+    }
+
+  }
+
+  function clearAllTimers() { clearTimer('first'); clearTimer('followup'); }
+
+ 
+
+  function disconnectObserver(observerName) {
+
+    if (state.observers[observerName]) {
+
+      state.observers[observerName].disconnect();
+
+      state.observers[observerName] = null;
+
+    }
+
+  }
+
+ 
+
+  /* ====== DOM Element Getters ====== */
+
+  function getLauncherEl() {
+
+    return (
+
+      document.querySelector('.embeddedServiceLauncher') ||
+
+      document.querySelector('.embeddedServiceSidebarButton') ||
+
+      document.querySelector('[data-embedded-messaging-launcher]') ||
+
+      document.querySelector('#embedded-messaging .embeddedMessagingIcon') ||
+
+      document.querySelector('#embedded-messaging button') ||
+
+      document.querySelector('button[class*="Launcher"], div[class*="Launcher"]')
+
+    );
+
+  }
+
+ 
+
+  function getChatFrameEl() {
+
+    return (
+
+      document.querySelector('.embeddedMessagingFrame') ||
+
+      document.querySelector('iframe[data-embedded-messaging-iframe]') ||
+
+      document.querySelector('iframe[src*="embeddedmessaging"]') ||
+
+      document.querySelector('iframe[id*="embeddedMessaging"]')
+
+    );
+
+  }
+
+ 
+
+  function getFixedRootEl() {
+
+    const frame = getChatFrameEl();
+
+    if (!frame) return null;
+
+ 
+
+    let el = frame;
+
+    while (el && el !== document.body) {
+
+      const cs = getComputedStyle(el);
+
+      if (cs.position === 'fixed') return el;
+
+      el = el.parentElement;
+
+    }
+
+    return document.querySelector('#embedded-messaging') || null;
+
+  }
+
+ 
+
+  function getHeaderEl() {
+
+    const fromAttr = document.body?.getAttribute?.('data-esw-header');
+
+    const candidates = (fromAttr ? fromAttr.split(',') : [])
+
+      .map(s => s.trim())
+
+      .filter(Boolean);
+
+ 
+
+    const defaults = [
+
+      'header.site-header', 'header.navbar', 'header#header', '#site-header',
+
+      'header.header', 'header', '.topbar', '.navbar'
+
+    ];
+
+ 
+
+    for (const sel of [...candidates, ...defaults]) {
+
+      const el = document.querySelector(sel);
+
+      if (el) return el;
+
+    }
+
+    return null;
+
+  }
+
+ 
+
+  /* ====== CSS Vars: header height ====== */
+
+  function updateHeaderHeightVar() {
+
+    const header = getHeaderEl();
+
+    const h = header
+
+      ? Math.round(header.getBoundingClientRect().height || header.offsetHeight || 60)
+
+      : 60;
+
+    document.documentElement.style.setProperty('--site-header-height', h + 'px');
+
+  }
+
+ 
+
+  /* ============================================================
+
+     FIX iOS 18: ANTI-OSCILLAZIONI (LOCK + HYSTERESIS) - TUO OK
+
+     ============================================================ */
+
+  let __vvRAF = 0;
+
+  let __baselineH = null;
+
+  let __keyboardOpen = false;
+
+  let __lockedH = null;
+
+  let __lastApplied = null;
+
+ 
+
+  function __roundH(px) { return Math.round(px / 4) * 4; }
+
+  function __getVVH() {
+
+    const vv = window.visualViewport;
+
+    const h = vv ? vv.height : window.innerHeight;
+
+    return __roundH(h);
+
+  }
+
+  function __applyViewportVars(vvh) {
+
+    document.documentElement.style.setProperty('--vvh', vvh + 'px');
+
+    document.documentElement.style.setProperty('--vv-offset-top', '0px'); // offsetTop ignorato
+
+  }
+
+  function __applyOnce(vvh) {
+
+    if (__lastApplied === vvh) return;
+
+    __lastApplied = vvh;
+
+    if (__vvRAF) cancelAnimationFrame(__vvRAF);
+
+    __vvRAF = requestAnimationFrame(() => {
+
+      __applyViewportVars(vvh);
+
+      __vvRAF = 0;
+
+    });
+
+  }
+
+ 
+
+  /* ============================================================
+
+     NEW: SCROLL GUARD iOS 18 (blocca auto-scroll verso l'alto)
+
+     ============================================================ */
+
+  let __pageScrollY = 0;              // scroll pre-chat (per ripristino)
+
+  let __guardAnchorWindowY = 0;       // con body fixed deve restare 0
+
+  let __guardRAF = 0;
+
+  let __guardUntil = 0;
+
+  let __guardScrollApplying = false;
+
+ 
+
+  function lockPageScrollPersistent() {
+
+    if (!isMobile()) return;
+
+    if (document.body.classList.contains('page-scroll-locked')) return;
+
+ 
+
+    __pageScrollY = window.scrollY || window.pageYOffset || 0;
+
+    document.body.classList.add('page-scroll-locked');
+
+    document.body.style.top = `-${__pageScrollY}px`;
+
+ 
+
+    // con body fixed la window scroll dovrebbe restare a 0
+
+    __guardAnchorWindowY = 0;
+
+    try { window.scrollTo(0, 0); } catch(e) {}
+
+  }
+
+ 
+
+  function unlockPageScrollPersistent() {
+
+    if (!document.body.classList.contains('page-scroll-locked')) return;
+
+ 
+
+    stopScrollGuard();
+
+    document.body.classList.remove('page-scroll-locked');
+
+    const y = __pageScrollY;
+
+    document.body.style.top = '';
+
+    window.scrollTo(0, y);
+
+  }
+
+ 
+
+  function startScrollGuard(ms = 1600) {
+
+    if (!isMobile()) return;
+
+    if (!document.body.classList.contains('esw-open')) return;
+
+ 
+
+    // se non è ancora locked, lockalo (per sicurezza)
+
+    lockPageScrollPersistent();
+
+ 
+
+    __guardUntil = Date.now() + ms;
+
+ 
+
+    if (__guardRAF) cancelAnimationFrame(__guardRAF);
+
+ 
+
+    const tick = () => {
+
+      if (!document.body.classList.contains('esw-open')) {
+
+        __guardRAF = 0;
+
+        return;
+
+      }
+
+ 
+
+      // Safari può provare a scrollare window anche con body fixed: riportiamo a 0
+
+      const y = window.scrollY || window.pageYOffset || 0;
+
+      if (y !== __guardAnchorWindowY) {
+
+        __guardScrollApplying = true;
+
+        window.scrollTo(0, __guardAnchorWindowY);
+
+        document.documentElement.scrollTop = __guardAnchorWindowY;
+
+        document.body.scrollTop = __guardAnchorWindowY;
+
+        // ribadisce il top bloccato (se Safari prova a modificarlo indirettamente)
+
+        document.body.style.top = `-${__pageScrollY}px`;
+
+        __guardScrollApplying = false;
+
+      }
+
+ 
+
+      if (Date.now() < __guardUntil) {
+
+        __guardRAF = requestAnimationFrame(tick);
+
+      } else {
+
+        __guardRAF = 0;
+
+      }
+
+    };
+
+ 
+
+    __guardRAF = requestAnimationFrame(tick);
+
+  }
+
+ 
+
+  function stopScrollGuard() {
+
+    if (__guardRAF) cancelAnimationFrame(__guardRAF);
+
+    __guardRAF = 0;
+
+    __guardUntil = 0;
+
+  }
+
+ 
+
+  // Se iOS prova comunque a scrollare, neutralizza subito (mentre chat open)
+
+  window.addEventListener('scroll', () => {
+
+    if (!isMobile()) return;
+
+    if (!document.body.classList.contains('esw-open')) return;
+
+    if (__guardScrollApplying) return;
+
+ 
+
+    const y = window.scrollY || window.pageYOffset || 0;
+
+    if (y !== __guardAnchorWindowY) {
+
+      __guardScrollApplying = true;
+
+      window.scrollTo(0, __guardAnchorWindowY);
+
+      document.documentElement.scrollTop = __guardAnchorWindowY;
+
+      document.body.scrollTop = __guardAnchorWindowY;
+
+      document.body.style.top = `-${__pageScrollY}px`;
+
+      __guardScrollApplying = false;
+
+    }
+
+  }, { passive: true });
+
+ 
+
+  // best-effort: evita scroll restoration del browser
+
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e) {}
+
+ 
+
+  /* ====== updateVisualViewportVars: aggiungo startScrollGuard quando la tastiera si apre ====== */
+
+  function updateVisualViewportVars() {
+
+    const h = __getVVH();
+
+ 
+
+    if (__baselineH === null) {
+
+      __baselineH = h;
+
+      __applyOnce(h);
+
+      return;
+
+    }
+
+ 
+
+    const OPEN_THRESHOLD = 160;
+
+    const CLOSE_THRESHOLD = 90;
+
+    const MIN_DELTA_APPLY = 16;
+
+ 
+
+    // tastiera si apre
+
+    if (!__keyboardOpen && (__baselineH - h) > OPEN_THRESHOLD) {
+
+      __keyboardOpen = true;
+
+ 
+
+      // ✅ NEW: quando la tastiera apre, iOS tenta auto-scroll → guardia
+
+      startScrollGuard(1800);
+
+ 
+
+      __lockedH = h;
+
+      __applyOnce(__lockedH);
+
+      return;
+
+    }
+
+ 
+
+    // tastiera aperta: LOCK
+
+    if (__keyboardOpen) {
+
+      if (h < (__lockedH - MIN_DELTA_APPLY)) {
+
+        __lockedH = h;
+
+        __applyOnce(__lockedH);
+
+        return;
+
+      }
+
+ 
+
+      if (h >= (__baselineH - CLOSE_THRESHOLD)) {
+
+        __keyboardOpen = false;
+
+        __lockedH = null;
+
+        __baselineH = h;
+
+        __applyOnce(h);
+
+ 
+
+        // possiamo fermare la guardia dopo poco (ma la pagina resta locked finché chat open)
+
+        startScrollGuard(600);
+
+        return;
+
+      }
+
+      return;
+
+    }
+
+ 
+
+    if (Math.abs(h - __baselineH) > MIN_DELTA_APPLY) {
+
+      __baselineH = h;
+
+      __applyOnce(h);
+
+    }
+
+  }
+
+ 
+
+  function initMobileViewportTracking() {
+
+    updateHeaderHeightVar();
+
+    updateVisualViewportVars();
+
+ 
+
+    const header = getHeaderEl();
+
+    if (header && 'ResizeObserver' in window) {
+
+      const ro = new ResizeObserver(() => updateHeaderHeightVar());
+
+      ro.observe(header);
+
+    }
+
+ 
+
+    if (window.visualViewport) {
+
+      window.visualViewport.addEventListener('resize', updateVisualViewportVars);
+
+    }
+
+ 
+
+    window.addEventListener('resize', () => {
+
+      updateHeaderHeightVar();
+
+      updateVisualViewportVars();
+
+    });
+
+ 
+
+    setTimeout(updateVisualViewportVars, 80);
+
+    setTimeout(updateVisualViewportVars, 260);
+
+  }
+
+ 
+
+  /* ====== Style Locking ====== */
+
+  function lockLauncherStyle() {
+
+    const launcher = getLauncherEl();
+
+    if (!launcher) return;
+
+ 
+
+    const cs = getComputedStyle(document.documentElement);
+
+    const bottom = cs.getPropertyValue('--chat-launcher-bottom').trim() || '60px';
+
+    const right = cs.getPropertyValue('--chat-launcher-right').trim() || '30px';
+
+ 
+
+    launcher.style.position = 'fixed';
+
+    launcher.style.bottom = bottom;
+
+    launcher.style.right = right;
+
+    launcher.style.left = 'auto';
+
+    launcher.style.top = 'auto';
+
+    launcher.style.transform = 'none';
+
+    launcher.style.transition = 'none';
+
+    launcher.style.zIndex = '2147483647';
+
+ 
+
+    updateNudgePosition();
+
+  }
+
+ 
+
+  function lockFixedRootStyle() {
+
+    const root = getFixedRootEl();
+
+    if (!root) return;
+
+ 
+
+    if (!isMobile()) {
+
+      const cs = getComputedStyle(document.documentElement);
+
+      const gap = cs.getPropertyValue('--chat-frame-bottom-gap').trim() || '40px';
+
+      const rightGap = cs.getPropertyValue('--chat-frame-right-gap').trim() || '30px';
+
+ 
+
+      root.style.position = 'fixed';
+
+      root.style.top = 'auto';
+
+      root.style.left = 'auto';
+
+      root.style.right = rightGap;
+
+      root.style.bottom = gap;
+
+      root.style.inset = 'auto ' + rightGap + ' ' + gap + ' auto';
+
+      root.style.zIndex = '2147483645';
+
+    }
+
+  }
+
+ 
+
+  function applyStylesWithRetry() {
+
+    lockLauncherStyle();
+
+    lockFixedRootStyle();
+
+ 
+
+    CONFIG.RETRY_DELAYS.forEach(delay => {
+
+      setTimeout(() => {
+
+        lockLauncherStyle();
+
+        lockFixedRootStyle();
+
+      }, delay);
+
+    });
+
+  }
+
+ 
+
+  /* ====== Observer Setup ====== */
+
+  function observeDynamicElements() {
+
+    disconnectObserver('launcher');
+
+    const launcher = getLauncherEl();
+
+    if (launcher) {
+
+      state.observers.launcher = new MutationObserver(() => lockLauncherStyle());
+
+      state.observers.launcher.observe(launcher, {
+
+        attributes: true,
+
+        attributeFilter: ['style', 'class', 'aria-expanded', 'aria-pressed']
+
+      });
+
+ 
+
+      // 1+2: lock + guard subito al click
+
+      launcher.addEventListener('click', () => {
+
+        lockPageScrollPersistent();
+
+        startScrollGuard(1600);
+
+        setTimeout(evaluateAndApplyOpenState, 350);
+
+      }, { capture: true, once: false });
+
+    }
+
+ 
+
+    disconnectObserver('fixedRoot');
+
+    const root = getFixedRootEl();
+
+    if (root) {
+
+      state.observers.fixedRoot = new MutationObserver(() => lockFixedRootStyle());
+
+      state.observers.fixedRoot.observe(root, {
+
+        attributes: true,
+
+        attributeFilter: ['style', 'class']
+
+      });
+
+    }
+
+ 
+
+    if (!state.observers.body) {
+
+      state.observers.body = new MutationObserver(() => {
+
+        lockLauncherStyle();
+
+        lockFixedRootStyle();
+
+      });
+
+      state.observers.body.observe(document.body, {
+
+        childList: true,
+
+        subtree: true
+
+      });
+
+    }
+
+  }
+
+ 
+
+  /* ====== Nudge ====== */
+
+  function showNudge(message) {
+
+    if (state.nudgeElement) return;
+
+ 
+
+    state.nudgeElement = document.createElement('div');
+
+    state.nudgeElement.className = 'chat-nudge';
+
+    state.nudgeElement.textContent = message;
+
+ 
+
+    const closeBtn = document.createElement('span');
+
+    closeBtn.className = 'close-btn';
+
+    closeBtn.textContent = '×';
+
+    closeBtn.onclick = function (e) {
+
+      e.stopPropagation();
+
+      removeNudge();
+
+    };
+
+    state.nudgeElement.appendChild(closeBtn);
+
+ 
+
+    state.nudgeElement.onclick = function () {
+
+      lockPageScrollPersistent();
+
+      startScrollGuard(1600);
+
+      window.embeddedservice_bootstrap?.open?.();
+
+      removeNudge();
+
+    };
+
+ 
+
+    document.body.appendChild(state.nudgeElement);
+
+ 
+
+    if (!isMobile()) {
+
+      if (state.nudgeBottomPosition === null) {
+
+        const launcher = getLauncherEl();
+
+        if (launcher) {
+
+          const rect = launcher.getBoundingClientRect();
+
+          const bottom = Math.max(0, window.innerHeight - rect.top + 20);
+
+          const maxBottom = window.innerHeight - 50;
+
+          const minBottom = 20;
+
+          state.nudgeBottomPosition = Math.min(Math.max(bottom, minBottom), maxBottom);
+
+        }
+
+      }
+
+      state.nudgeElement.style.bottom = state.nudgeBottomPosition + 'px';
+
+    }
+
+  }
+
+ 
+
+  function removeNudge() {
+
+    if (state.nudgeElement) {
+
+      state.nudgeElement.remove();
+
+      state.nudgeElement = null;
+
+    }
+
+  }
+
+ 
+
+  function updateNudgePosition() {
+
+    if (isMobile() || !state.nudgeElement) return;
+
+ 
+
+    const launcher = getLauncherEl();
+
+    if (launcher) {
+
+      if (state.nudgeBottomPosition === null) {
+
+        const rect = launcher.getBoundingClientRect();
+
+        const bottom = Math.max(0, window.innerHeight - rect.top + 20);
+
+        const maxBottom = window.innerHeight - 50;
+
+        const minBottom = 20;
+
+        state.nudgeBottomPosition = Math.min(Math.max(bottom, minBottom), maxBottom);
+
+      }
+
+      state.nudgeElement.style.bottom = state.nudgeBottomPosition + 'px';
+
+    }
+
+  }
+
+ 
+
+  /* ====== State Detection ====== */
+
+  function isOpenState() {
+
+    const frame = getChatFrameEl();
+
+    const root = getFixedRootEl();
+
+    if (!frame || !root) return false;
+
+ 
+
+    const fs = getComputedStyle(frame);
+
+    const fr = frame.getBoundingClientRect();
+
+    const rr = root.getBoundingClientRect();
+
+ 
+
+    const frameVisible =
+
+      fs.display !== 'none' &&
+
+      fs.visibility !== 'hidden' &&
+
+      fr.height > CONFIG.MIN_CHAT_HEIGHT &&
+
+      fr.width > CONFIG.MIN_CHAT_WIDTH;
+
+ 
+
+    const rootLarge = rr.height > CONFIG.MIN_CHAT_HEIGHT;
+
+    return frameVisible && rootLarge;
+
+  }
+
+ 
+
+  function evaluateAndApplyOpenState() {
+
+    const nowOpen = isOpenState();
+
+    const wasOpen = state.chatCurrentlyOpen;
+
+    if (nowOpen === wasOpen) return;
+
+ 
+
+    if (wasOpen && !nowOpen) {
+
+      state.chatCurrentlyOpen = false;
+
+      document.body.classList.remove('esw-open');
+
+      unlockPageScrollPersistent();
+
+ 
+/*
+      if (state.chatEverOpened) {
+
+        clearTimer('followup');
+
+        const messages = getLocalizedMessages();
+
+        state.timers.followup = setTimeout(() => {
+
+          if (!isOpenState()) showNudge(messages.followup);
+
+        }, CONFIG.NUDGE_DELAY_MS);
+
+      }
+*/
+    }
+ 
+
+    if (!wasOpen && nowOpen) {
+
+      state.chatCurrentlyOpen = true;
+
+      state.chatEverOpened = true;
+
+      document.body.classList.add('esw-open');
+
+ 
+
+      lockPageScrollPersistent();
+
+      startScrollGuard(1600);
+
+ 
+
+      removeNudge();
+
+      clearAllTimers();
+
+    }
+
+  }
+
+ 
+
+  function startStatePolling() {
+
+    if (state.observers.statePoller) clearInterval(state.observers.statePoller);
+
+    state.chatCurrentlyOpen = isOpenState();
+
+    state.observers.statePoller = setInterval(
+
+      evaluateAndApplyOpenState,
+
+      CONFIG.STATE_POLL_INTERVAL_MS
+
+    );
+
+  }
+
+ 
+
+  /* ====== Resize ====== */
+
+  function handleResize() {
+
+    updateHeaderHeightVar();
+
+    updateNudgePosition();
+
+ 
+
+    if (isMobile() && isOpenState()) return;
+
+ 
+
+    setTimeout(() => {
+
+      lockLauncherStyle();
+
+      lockFixedRootStyle();
+
+    }, 50);
+
+  }
+
+ 
+
+  /* ====== Salesforce Events ====== */
+
+  window.addEventListener('onEmbeddedMessagingReady', function () {
+
+    document.body.classList.add('chat-launcher-fixed');
+
+ 
+
+    updateHeaderHeightVar();
+
+    applyStylesWithRetry();
+
+    observeDynamicElements();
+
+    startStatePolling();
+
+ 
+
+    initMobileViewportTracking();
+
+ 
+
+    window.addEventListener('resize', handleResize);
+
+ 
+
+    clearTimer('first');
+
+    const messages = getLocalizedMessages();
+
+    state.timers.first = setTimeout(() => {
+
+      if (!state.chatEverOpened && !isOpenState()) showNudge(messages.first);
+
+    }, CONFIG.NUDGE_DELAY_MS);
+
+  });
+
+ 
+
+  window.addEventListener('onEmbeddedMessagingButtonClicked', function () {
+
+    lockPageScrollPersistent();
+
+    startScrollGuard(1600);
+
+    setTimeout(evaluateAndApplyOpenState, 250);
+
+  });
+
+ 
+
+  window.addEventListener('onEmbeddedMessagingWindowOpened', function () {
+
+    state.chatCurrentlyOpen = true;
+
+    //state.chatEverOpened = true;
+
+    document.body.classList.add('esw-open');
+
+ 
+
+    lockPageScrollPersistent();
+
+    startScrollGuard(1600);
+
+ 
+
+    removeNudge();
+
+    clearAllTimers();
+
+ 
+
+    setTimeout(applyStylesWithRetry, 50);
+
+ 
+
+    setTimeout(updateVisualViewportVars, 50);
+
+    setTimeout(updateVisualViewportVars, 250);
+
+  });
+
+ 
+
+  /*window.addEventListener('onEmbeddedMessagingWindowMinimized', function () {
+
+    state.chatCurrentlyOpen = false;
+
+    document.body.classList.remove('esw-open');
+
+    unlockPageScrollPersistent();
+
+ 
+
+    setTimeout(applyStylesWithRetry, 50);
+
+ 
+
+    if (state.chatEverOpened) {
+
+      clearTimer('followup');
+
+      const messages = getLocalizedMessages();
+
+      state.timers.followup = setTimeout(() => {
+
+        if (!isOpenState()) showNudge(messages.followup);
+
+      }, CONFIG.NUDGE_DELAY_MS);
+
+    }
+
+  });
+*/
+ 
+
+  window.addEventListener('onEmbeddedMessagingWindowClosed', function () {
+
+    state.chatCurrentlyOpen = false;
+
+    document.body.classList.remove('esw-open');
+
+    unlockPageScrollPersistent();
+
+    setTimeout(applyStylesWithRetry, 50);
+
+  });
+
+ 
+
+})();
+
+</script>
+
+ 
+
+<!-- ======================== CUSTOM STYLES ======================== -->
+
+<style>
+
+:root {
+
+  --chat-launcher-bottom: 60px;
+
+  --chat-launcher-right: 30px;
+
+  --chat-nudge-offset: 70px;
+
+  --chat-header-height: 60px;
+
+  --site-header-height: 60px;
+
+  --vvh: 100dvh;
+
+  --vv-offset-top: 0px;
+
+  --chat-frame-bottom-gap: 40px;
+
+  --chat-frame-right-gap: 30px;
+
+}
+
+ 
+
+/* ======= DESKTOP (UNCHANGED) ======= */
+
+@media (min-width: 1025px) {
+
+  .embeddedMessagingFrame {
+
+    border-radius: 16px !important;
+
+    overflow: hidden !important;
+
+    z-index: 2147483645 !important;
+
+  }
+
+  .embeddedMessagingHeader {
+
+    border-top-left-radius: 16px !important;
+
+    border-top-right-radius: 16px !important;
+
+  }
+
+  .embeddedMessagingConversation {
+
+    border-bottom-left-radius: 16px !important;
+
+    border-bottom-right-radius: 16px !important;
+
+  }
+
+}
+
+ 
+
+/* ======= LAUNCHER FIXED ======= */
+
+.chat-launcher-fixed .embeddedServiceLauncher,
+
+.chat-launcher-fixed .embeddedServiceSidebarButton,
+
+.chat-launcher-fixed #embedded-messaging .embeddedMessagingIcon,
+
+.chat-launcher-fixed button[class*="Launcher"],
+
+.chat-launcher-fixed div[class*="Launcher"] {
+
+  position: fixed !important;
+
+  bottom: var(--chat-launcher-bottom) !important;
+
+  right: var(--chat-launcher-right) !important;
+
+  left: auto !important;
+
+  top: auto !important;
+
+  transform: none !important;
+
+  z-index: 2147483647 !important;
+
+}
+
+ 
+
+/* ======= NUDGE ======= */
+
+.chat-nudge {
+
+  position: fixed;
+
+  bottom: calc(var(--chat-launcher-bottom) + var(--chat-nudge-offset));
+
+  right: var(--chat-launcher-right);
+
+  background: #ffffff;
+
+  color: #000;
+
+  padding: 10px 20px 10px 12px;
+
+  border-radius: 12px;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  z-index: 2147483646;
+
+  cursor: pointer;
+
+  animation: bounce 5s ease-out;
+
+}
+
+@keyframes bounce {
+
+  0% { transform: translateY(0); }
+
+  20% { transform: translateY(-6px); }
+
+  40% { transform: translateY(0); }
+
+  60% { transform: translateY(-3px); }
+
+  80% { transform: translateY(0); }
+
+  100% { transform: translateY(0); }
+
+}
+
+.chat-nudge .close-btn {
+
+  position: absolute;
+
+  top: 4px;
+
+  right: 6px;
+
+  font-weight: bold;
+
+  font-size: 14px;
+
+  color: #666;
+
+  cursor: pointer;
+
+  margin-left: 8px;
+
+}
+
+.chat-nudge .close-btn:hover { color: #000; }
+
+ 
+
+/* ======= MOBILE (FIX) — iPhone Safari keyboard-safe under fixed header ======= */
+
+@media (max-width: 1024px) {
+
+ 
+
+  body.esw-open {
+
+    position: relative !important;
+
+    overflow: hidden !important;
+
+    width: 100% !important;
+
+    overscroll-behavior: none;
+
+  }
+
+ 
+
+  /* NEW: lock pagina (modal) */
+
+  body.page-scroll-locked {
+
+    position: fixed !important;
+
+    left: 0 !important;
+
+    right: 0 !important;
+
+    width: 100% !important;
+
+    overflow: hidden !important;
+
+    overscroll-behavior: none !important;
+
+    touch-action: none !important;
+
+  }
+
+ 
+
+  .esw-open #embedded-messaging {
+
+    position: fixed !important;
+
+    left: 0 !important;
+
+    right: 0 !important;
+
+ 
+
+    top: calc(var(--site-header-height, 60px) + var(--vv-offset-top, 0px)) !important;
+
+ 
+
+    height: calc(var(--vvh, 100dvh) - var(--site-header-height, 60px) - var(--vv-offset-top, 0px)) !important;
+
+    max-height: calc(var(--vvh, 100dvh) - var(--site-header-height, 60px) - var(--vv-offset-top, 0px)) !important;
+
+ 
+
+    width: 100vw !important;
+
+    max-width: none !important;
+
+    margin: 0 !important;
+
+    z-index: 2147483646 !important;
+
+  }
+
+ 
+
+  .esw-open iframe[data-embedded-messaging-iframe],
+
+  .esw-open .embeddedMessagingFrame {
+
+    position: fixed !important;
+
+    left: 0 !important;
+
+    right: 0 !important;
+
+ 
+
+    top: calc(var(--site-header-height, 60px) + var(--vv-offset-top, 0px)) !important;
+
+ 
+
+    height: calc(var(--vvh, 100dvh) - var(--site-header-height, 60px) - var(--vv-offset-top, 0px)) !important;
+
+    max-height: calc(var(--vvh, 100dvh) - var(--site-header-height, 60px) - var(--vv-offset-top, 0px)) !important;
+
+ 
+
+    width: 100vw !important;
+
+    max-width: none !important;
+
+    margin: 0 !important;
+
+ 
+
+    border-radius: 0 !important; /* rettangolare */
+
+    z-index: 2147483646 !important;
+
+  }
+
+ 
+
+  .esw-open .embeddedMessagingWindow,
+
+  .esw-open .embeddedMessagingFrameContainer,
+
+  .esw-open .embeddedMessagingConversation,
+
+  .esw-open .embeddedMessagingConversationContainer,
+
+  .esw-open .embeddedMessagingConversationBody {
+
+    width: 100% !important;
+
+    max-width: none !important;
+
+    left: 0 !important;
+
+    right: 0 !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+  }
+
+ 
+
+  .esw-open .embeddedMessagingHeader {
+
+    position: sticky !important;
+
+    top: 0 !important;
+
+    z-index: 10 !important;
+
+  }
+
+ 
+
+  .esw-open .embeddedMessagingConversation {
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    height: 100% !important;
+
+  }
+
+ 
+
+  .esw-open .embeddedMessagingConversationBody {
+
+    flex: 1 1 auto !important;
+
+    overflow-y: auto !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    overflow-anchor: none !important;
+
+  }
+
+ 
+
+  .esw-open .embeddedMessagingInputContainer {
+
+    flex-shrink: 0 !important;
+
+  }
+
+ 
+
+  html, body {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    overflow-x: hidden !important;
+
+  }
+
+ 
+
+  body.esw-open {
+
+    overflow-x: hidden !important;
+
+  }
+
+}
+
+</style>
+
+ 
+
+<!-- ======================== LOAD SCRIPT ======================== -->
+
 <script
+
   type="text/javascript"
+
   src="https://leapmotor--dev01.sandbox.my.site.com/ESWLPMLeapmotor1760706603231/assets/js/bootstrap.min.js"
-  onload="initEmbeddedMessaging()"
-></script>
+
+  onload="initEmbeddedMessaging()">
+
+</script>
 
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
