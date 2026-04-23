@@ -115,8 +115,6 @@ const ESW_CONFIG = {
 
     'uk': { name: 'United Kingdom', language: 'en_US', code: 'uk' },
 
-    'us': { name: 'United States', language: 'en_US', code: 'us' },
-
     'pt': { name: 'Portugal', language: 'pt_PT', code: 'pt' },
     
     'at': { name: 'Austria', language: 'de', code: 'at' },
@@ -1854,22 +1852,10 @@ function initEmbeddedMessaging() {
 
 <!-- ======================== LOAD SCRIPT ======================== -->
 
-<script type="text/javascript">
-  (function() {
-    var countryCode = window.location.pathname
-      .split('/').filter(function(p) { return p.length > 0; })[0] || 'en';
-
-    var bootstrapSrc = countryCode.toLowerCase() === 'uk'
-      ? 'https://leapmotor--uat.sandbox.my.site.com/ESWGithubTest1772119881058/assets/js/bootstrap.min.jss'
-      : 'https://leapmotor--uat.sandbox.my.site.com/ESWLeapmotorTest1765461060847/assets/js/bootstrap.min.js';
-
-    var s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.src = bootstrapSrc;
-    s.onload = function() { initEmbeddedMessaging(); };
-    document.body.appendChild(s);
-  })();
 </script>
+<script type='text/javascript' src='https://leapmotor--uat.sandbox.my.site.com/ESWLeapmotorTest1765461060847/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'>
+</script>
+
 
 </body>
 </html>
