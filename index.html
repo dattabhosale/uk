@@ -90,11 +90,23 @@
 */
 
 // ======================== CONFIGURATION =========================
+var ESW_CONFIG = window.ESW_CONFIG;
 const ESW_CONFIG = {
   ORG_ID: '00DUA000003t2Uy',
-  DEPLOYMENT_NAME: 'Leapmotor_Test',
-  SITE_URL: 'https://leapmotor--uat.sandbox.my.site.com/ESWLeapmotorTest1765461060847',
-  SCRT2_URL: 'https://leapmotor--uat.sandbox.my.salesforce-scrt.com',
+
+  // Default (non-UK) deployment
+  DEFAULT: {
+    DEPLOYMENT_NAME: 'LPMI_TEST_1',
+    SITE_URL: 'https://leapmotor--uat.sandbox.my.site.com/ESWLPMITEST1781604541699',
+    SCRT2_URL: 'https://leapmotor--uat.sandbox.my.salesforce-scrt.com'
+  },
+
+  // UK deployment
+  UK: {
+    DEPLOYMENT_NAME: 'LPMI_TEST_UK',
+    SITE_URL: 'https://leapmotor--uat.sandbox.my.site.com/ESWLPMITESTUK1781606270019',
+    SCRT2_URL: 'https://leapmotor--uat.sandbox.my.salesforce-scrt.com'
+  },
   COUNTRY_MAPPING: {
     'it': { name: 'Italy',           language: 'it',    code: 'it' },
     'es': { name: 'Spain',           language: 'es',    code: 'es' },
